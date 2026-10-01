@@ -6,12 +6,12 @@
 <meta name="theme-color" content="#1e5a7a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>MOEX Options · BS Calculator</title>
+<title>Калькулятор опционов QCKSLVR TRADING</title>
 <style>
   :root{
     --bg:#eef2f5; --panel:#fff; --primary:#1e5a7a; --primary-dark:#0f425c;
     --accent:#2c7da0; --text:#1a3b4f; --muted:#4a6f8a; --border:#cfdfe9;
-    --green:#2e9e5b; --red:#c1464a; --radius:14px;
+    --green:#2e9e5b; --red:#c1464a;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html{-webkit-text-size-adjust:100%;}
@@ -23,16 +23,17 @@
   }
   .app{max-width:640px; margin:0 auto; padding-bottom:16px;}
 
-  /* --- Заголовок --- */
   .app-header{
     padding:12px 16px 10px;
     background:linear-gradient(135deg,#1e5a7a,#2c7da0);
     color:#fff; border-radius:0 0 16px 16px;
   }
-  .app-header h1{font-size:1.05rem; font-weight:600; margin:0 0 2px;}
-  .app-header .sub{font-size:.72rem; opacity:.85;}
+  .app-header h1{
+    font-size:.92rem; font-weight:600; margin:0 0 2px;
+    letter-spacing:.03em; text-transform:uppercase;
+  }
+  .app-header .sub{font-size:.72rem; opacity:.85; letter-spacing:.02em;}
 
-  /* --- Sticky результаты --- */
   .results-card{
     position:sticky; top:0; z-index:50;
     background:#fff; padding:10px 12px;
@@ -53,7 +54,6 @@
   .result-row .value{font-size:1.05rem; font-weight:700; color:var(--primary); font-variant-numeric:tabular-nums;}
   .result-row.spread .value{font-size:.95rem;}
 
-  /* --- Вкладки --- */
   .tabs{
     display:flex; gap:6px; padding:10px 12px 0;
     background:#fff; position:sticky; top:var(--sticky-h, 130px);
@@ -71,7 +71,6 @@
   .panel{display:none; padding:14px 12px 8px;}
   .panel.active{display:block;}
 
-  /* --- Формы --- */
   .form-group{margin-bottom:12px;}
   .form-group label{
     display:block; font-size:.7rem; text-transform:uppercase;
@@ -90,7 +89,6 @@
   }
   .form-row-2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
 
-  /* --- Кнопки --- */
   .btn-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px;}
   .btn{
     padding:12px 14px; font-size:.9rem; font-weight:600;
@@ -101,15 +99,14 @@
   .btn-primary:active{background:var(--primary-dark);}
   .btn:active{background:#eef2f7;}
 
-  /* --- Греки --- */
   .greeks-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px;}
   .greek-box{
     background:#f9fbfd; border:1px solid #e2edf4; border-radius:10px;
     padding:10px; text-align:center;
   }
-  .greek-box .title{font-size:.68rem; color:var(--muted); text-transform:uppercase; font-weight:700;}
+  .greek-box .title{font-size:.68rem; color:var(--muted); text-transform:uppercase; font-weight:700; letter-spacing:.03em;}
   .greek-box .val{font-size:1rem; font-weight:700; color:var(--primary); font-variant-numeric:tabular-nums; margin-top:3px;}
-  .section-title{font-size:.8rem; font-weight:700; color:var(--primary); margin:14px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--border);}
+  .section-title{font-size:.8rem; font-weight:700; color:var(--primary); margin:14px 0 8px; padding-bottom:4px; border-bottom:1px solid var(--border); text-transform:uppercase; letter-spacing:.03em;}
   .section-title:first-child{margin-top:0;}
 
   .badge{
@@ -119,7 +116,6 @@
   .model-note{font-size:.68rem; color:#5f7f9e; margin-top:5px; font-style:italic; line-height:1.35;}
   .expiry-source{font-size:.7rem; color:var(--accent); margin-top:4px;}
 
-  /* --- Планшет/ПК: две колонки, без вкладок --- */
   @media (min-width:780px){
     body{padding:16px;}
     .app{max-width:1100px;}
@@ -139,39 +135,36 @@
 <body>
 <div class="app">
   <header class="app-header">
-    <h1>📊 MOEX Options</h1>
-    <div class="sub">Black‑Scholes · калькулятор цены опциона</div>
+    <h1>Калькулятор опционов QCKSLVR TRADING</h1>
+    <div class="sub">Black‑Scholes · цена опциона</div>
   </header>
 
   <div class="layout">
-    <!-- ЛЕВАЯ/ВЕРХНЯЯ часть: результаты + гейки -->
     <div class="layout-left">
       <div class="results-card" id="resultsCard">
         <div class="result-row buy">
-          <span class="label">🔵 Покупка · S = <span id="buyLevelVal">150</span></span>
+          <span class="label">Покупка · S = <span id="buyLevelVal">150</span></span>
           <span class="value" id="priceBuyResult">— ₽</span>
         </div>
         <div class="result-row sell">
-          <span class="label">🔴 Продажа · S = <span id="sellLevelVal">163</span></span>
+          <span class="label">Продажа · S = <span id="sellLevelVal">163</span></span>
           <span class="value" id="priceSellResult">— ₽</span>
         </div>
         <div class="result-row spread">
-          <span class="label">🧾 Спред</span>
+          <span class="label">Спред</span>
           <span class="value" id="spreadResult">— ₽</span>
         </div>
         <div id="recommendMsg" class="badge"></div>
       </div>
     </div>
 
-    <!-- ПРАВАЯ/НИЖНЯЯ часть: вкладки -->
     <div class="layout-right">
       <nav class="tabs" id="tabs">
-        <button data-tab="params" class="active">⚙️ Параметры</button>
-        <button data-tab="greeks">📐 Греки</button>
-        <button data-tab="actions">💾 Действия</button>
+        <button data-tab="params" class="active">Параметры</button>
+        <button data-tab="greeks">Греки</button>
+        <button data-tab="actions">Действия</button>
       </nav>
 
-      <!-- Вкладка: Параметры -->
       <section class="panel active" id="tab-params">
         <div class="form-group">
           <label>Тип опциона</label>
@@ -223,27 +216,25 @@
         </div>
       </section>
 
-      <!-- Вкладка: Греки -->
       <section class="panel" id="tab-greeks">
-        <div class="section-title">🔵 При покупке (S = <span id="buyLevelVal2">150</span>)</div>
+        <div class="section-title">При покупке (S = <span id="buyLevelVal2">150</span>)</div>
         <div class="greeks-grid" id="greeksBuy"></div>
 
-        <div class="section-title">🔴 При продаже (S = <span id="sellLevelVal2">163</span>)</div>
+        <div class="section-title">При продаже (S = <span id="sellLevelVal2">163</span>)</div>
         <div class="greeks-grid" id="greeksSell"></div>
       </section>
 
-      <!-- Вкладка: Действия -->
       <section class="panel" id="tab-actions">
         <div class="btn-row">
-          <button id="calcBtn" class="btn btn-primary">🧮 Рассчитать</button>
-          <button id="resetBtn" class="btn">⟳ Сброс</button>
+          <button id="calcBtn" class="btn btn-primary">Рассчитать</button>
+          <button id="resetBtn" class="btn">Сброс</button>
         </div>
         <div class="btn-row" style="margin-top:10px;">
-          <button id="saveSettingsBtn" class="btn">💾 Сохранить</button>
-          <button id="exportCsvBtn" class="btn">📎 CSV</button>
+          <button id="saveSettingsBtn" class="btn">Сохранить</button>
+          <button id="exportCsvBtn" class="btn">CSV</button>
         </div>
         <div class="model-note" style="margin-top:14px;">
-          💡 Совет: добавьте страницу на главный экран (меню Chrome → «Установить приложение» / «Добавить на главный экран»), чтобы пользоваться как обычным приложением.
+          Совет: добавьте страницу на главный экран браузера, чтобы открывать её как приложение.
         </div>
       </section>
     </div>
@@ -251,7 +242,6 @@
 </div>
 
 <script>
-  // ---------- BS / binomial ----------
   function normCDF(x){const t=1/(1+0.2316419*Math.abs(x));const d=0.3989423*Math.exp(-x*x/2);const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274))));return x>0?1-p:p;}
   function blackScholes(spot,strike,T,rate,vol,div,type){if(T<=0)return type==='call'?Math.max(0,spot-strike):Math.max(0,strike-spot);const r=rate/100,q=div/100,sigma=vol/100;const d1=(Math.log(spot/strike)+(r-q+sigma*sigma/2)*T)/(sigma*Math.sqrt(T));const d2=d1-sigma*Math.sqrt(T);if(type==='call')return spot*Math.exp(-q*T)*normCDF(d1)-strike*Math.exp(-r*T)*normCDF(d2);return strike*Math.exp(-r*T)*normCDF(-d2)-spot*Math.exp(-q*T)*normCDF(-d1);}
   function binomialAmerican(spot,strike,T,rate,vol,div,type,steps=200){if(T<=0)return type==='call'?Math.max(0,spot-strike):Math.max(0,strike-spot);const r=rate/100,q=div/100,sigma=vol/100;const dt=T/steps;const u=Math.exp(sigma*Math.sqrt(dt));const d=1/u;const p=(Math.exp((r-q)*dt)-d)/(u-d);const disc=Math.exp(-r*dt);let prices=Array(steps+1);for(let i=0;i<=steps;i++)prices[i]=spot*Math.pow(u,steps-i)*Math.pow(d,i);let values=Array(steps+1);for(let i=0;i<=steps;i++)values[i]=type==='call'?Math.max(0,prices[i]-strike):Math.max(0,strike-prices[i]);for(let step=steps-1;step>=0;step--){for(let i=0;i<=step;i++){const hold=disc*(p*values[i]+(1-p)*values[i+1]);const exer=type==='call'?Math.max(0,spot*Math.pow(u,step-i)*Math.pow(d,i)-strike):Math.max(0,strike-spot*Math.pow(u,step-i)*Math.pow(d,i));values[i]=Math.max(hold,exer);}}return values[0];}
@@ -294,7 +284,6 @@
   function resetToExample(){g('optionType').value='call';g('strike').value='160';g('priceBuy').value='150';g('priceSell').value='163';g('currentDate').value=new Date().toISOString().slice(0,10);g('riskFree').value='10';g('volatility').value='30';g('dividend').value='0';g('pricingModel').value='bs';g('expirySource').textContent='';updatePrices();}
   function exportCSV(){const rows=[['Параметр','Значение'],['Тип',g('optionType').value],['Страйк',g('strike').value],['S покупка',g('priceBuy').value],['S продажа',g('priceSell').value],['Экспирация',g('expiryDate').value],['Текущая дата',g('currentDate').value],['Ставка %',g('riskFree').value],['Волатильность %',g('volatility').value],['Модель',g('pricingModel').value],['Цена (покупка)',g('priceBuyResult').textContent],['Цена (продажа)',g('priceSellResult').textContent],['Спред',g('spreadResult').textContent]];const csv=rows.map(r=>r.join(',')).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='option_calc.csv';a.click();}
 
-  // ---------- Вкладки ----------
   document.querySelectorAll('.tabs button').forEach(btn=>{
     btn.addEventListener('click',()=>{
       document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
@@ -304,7 +293,6 @@
     });
   });
 
-  // ---------- Слушатели ----------
   g('calcBtn').addEventListener('click',updatePrices);
   g('resetBtn').addEventListener('click',resetToExample);
   g('saveSettingsBtn').addEventListener('click',saveSettings);
@@ -312,13 +300,11 @@
   ['optionType','strike','priceBuy','priceSell','currentDate','expiryDate','riskFree','volatility','dividend','pricingModel']
     .forEach(id=>g(id).addEventListener('input',updatePrices));
 
-  // ---------- Инициализация ----------
   if(!g('currentDate').value) g('currentDate').value=new Date().toISOString().slice(0,10);
   if(!g('expiryDate').value) g('expiryDate').value=new Date(Date.now()+30*86400000).toISOString().slice(0,10);
   loadSettings();
   updatePrices();
 
-  // ---------- Мост с Streamlit ----------
   window.addEventListener('message', (event)=>{
     const d=event.data;
     if(!d||d.type!=='setExpiry') return;
@@ -328,7 +314,7 @@
     if(el.value!==d.value){
       el.value=d.value;
       const src=g('expirySource');
-      if(src) src.textContent = d.series_code ? `↳ из MOEX: серия ${d.series_code}` : '↳ из MOEX';
+      if(src) src.textContent = d.series_code ? `Дата из серии ${d.series_code}` : 'Дата из источника';
       updatePrices();
       try{saveSettings();}catch(_){}
     }
