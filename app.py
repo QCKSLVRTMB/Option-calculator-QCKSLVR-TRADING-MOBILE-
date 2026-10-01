@@ -12,18 +12,19 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# ---------- CSS ----------
 st.markdown("""
 <style>
-.block-container {padding-top: 0.6rem; padding-bottom: 2rem;}
+.block-container {padding-top: .6rem; padding-bottom: 2rem;}
 @media (max-width: 640px){
-  .block-container {padding-left: 0.6rem; padding-right: 0.6rem;}
+  .block-container {padding-left: .6rem; padding-right: .6rem;}
   h1 {font-size: 1.2rem !important;}
   .stTabs [data-baseweb="tab"] {font-size: .85rem; padding: 8px 6px;}
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ================= MOEX API =================
+# ================= MOEX ISS API =================
 API_BASE_URL = "https://iss.moex.com/iss/apps/option-calc/v1"
 SECURITIES_URL = "https://iss.moex.com/iss/engines/futures/markets/options/securities.json?iss.meta=off"
 ASSET_TYPE_MAP = {'Фьючерс':'futures','Акция':'share','Валюта':'currency','Товар':'commodity','Индекс':'index'}
@@ -63,7 +64,8 @@ def fetch_optionseries(asset: str, asset_type_ui: str):
     items = data if isinstance(data, list) else data.get('data', [])
     for item in items:
         if 'optionseries_code' in item and 'expiration_date' in item:
-            series.append({'code': item['optionseries_code'], 'expiry': item['expiration_date']})
+            series.append({'code': item['optionseries_code'],
+                           'expiry': item['expiration_date']})
     return series
 
 
@@ -131,9 +133,10 @@ def fetch_volatility_graph(asset: str, series_code: str, asset_type_ui: str):
     except Exception: return []
 
 
-# ================= Мост =================
+# ================= Мост HTML ↔ Python =================
 
 def push_expiry_to_calculator(expiry_str: str, series_code: str = ""):
+    """Отправляет дату экспирации в iframe калькулятора через postMessage."""
     js = f"""
     <script>
     (function(){{
@@ -151,11 +154,68 @@ def push_expiry_to_calculator(expiry_str: str, series_code: str = ""):
     components.html(js, height=0)
 
 
+# ================= Подсветка «выгодных» греков =================
+
+FAV_COLOR = "#9ee49e"   # насыщенный зелёный — «выгодно»
+
+def favorable_color(col: str, val, mode: str):
+    """
+    Возвращает цвет, если значение грека 'выгодно' при заданном режиме,
+    иначе None. Пороги — эвристика, настраиваются здесь.
+    mode: 'off' | 'buyer' | 'seller'
+    """
+    if mode == 'off' or val is None or pd.isna(val):
+        return None
+    try: v = float(val)
+    except (TypeError, ValueError): return None
+
+    if mode == 'buyer':
+        if col == 'Call_Delta' and v >=  0.5:  return FAV_COLOR
+        if col == 'Put_Delta'  and v <= -0.5:  return FAV_COLOR
+        if col in ('Call_Theta','Put_Theta') and v > -0.05: return FAV_COLOR
+        if col == 'IV_%'       and v < 25:     return FAV_COLOR
+    elif mode == 'seller':
+        if col == 'Call_Delta' and v <=  0.3:  return FAV_COLOR
+        if col == 'Put_Delta'  and v >= -0.3:  return FAV_COLOR
+        if col in ('Call_Theta','Put_Theta') and v < -0.2: return FAV_COLOR
+        if col == 'IV_%'       and v > 50:     return FAV_COLOR
+    return None
+
+
+def style_board(df: pd.DataFrame, central, mode: str):
+    """
+    Стилизует DataFrame доски:
+    • базовые цвета: голубой (Call), розовый (Put), серый (страйк/IV)
+    • если грек «выгоден» — ячейка становится зелёной (перекрывает базовый)
+    """
+    def apply(row):
+        strike = row.get('Strike')
+        is_central = central is not None and abs(strike - central) < 0.01
+        call_bg = "#e1e3fb" if is_central else "#dbf3df"
+        put_bg  = "#fee5cd" if is_central else "#ffcdce"
+        strike_bg = "#e3e7ec"
+        styles = []
+        for col in row.index:
+            bg, extra = "", ""
+            if col.startswith('Call_'): bg = call_bg
+            elif col.startswith('Put_'): bg = put_bg
+            elif col in ('Strike', 'IV_%'):
+                bg = strike_bg; extra = "font-weight:bold;"
+
+            hl = favorable_color(col, row[col], mode)
+            if hl:
+                bg = hl
+                extra += "font-weight:800;"
+            styles.append(f"background-color:{bg};{extra}")
+        return styles
+    return df.style.apply(apply, axis=1).format(precision=4, na_rep="—")
+
+
 # ================= UI =================
 
 st.title("📊 MOEX Options")
 
-tab_calc, tab_board = st.tabs(["🧮 Калькулятор", "📡 MOEX"])
+tab_calc, tab_board = st.tabs(["🧮 Калькулятор", "📡 Доска MOEX"])
 
 # ---------- Вкладка 1: калькулятор ----------
 with tab_calc:
@@ -164,21 +224,23 @@ with tab_calc:
     st.caption("💡 На телефоне добавьте страницу на главный экран — "
                "браузер откроет её почти как приложение.")
 
-# ---------- Вкладка 2: MOEX ----------
+# ---------- Вкладка 2: доска MOEX ----------
 with tab_board:
+    # ---- Поиск серии ----
+    st.markdown("##### 🔍 Поиск серии опционов")
     c1, c2 = st.columns([3, 2])
     with c1:
         asset = st.text_input("Базовый актив", value="GAZR",
-                              placeholder="GAZR, GAZP, SBRF...").strip().upper()
+                              placeholder="GAZR, GAZP, SBRF, RTS...").strip().upper()
     with c2:
-        asset_type_ui = st.selectbox("Вид БА",
+        asset_type_ui = st.selectbox("Вид базового актива",
             ["Фьючерс","Акция","Валюта","Товар","Индекс"])
 
-    b1, b2 = st.columns([1,1])
+    b1, b2 = st.columns([1, 1])
     with b1:
-        load_btn = st.button("🔄 Загрузить серии", use_container_width=True)
+        load_btn = st.button("🔄 Загрузить серии", use_container_width=True, type="primary")
     with b2:
-        if st.button("♻️ Сбросить кэш", use_container_width=True):
+        if st.button("♻️ Сбросить кэш MOEX", use_container_width=True):
             st.cache_data.clear(); st.rerun()
 
     if "series_list" not in st.session_state:
@@ -188,20 +250,26 @@ with tab_board:
         try:
             with st.spinner("Загрузка серий..."):
                 st.session_state.series_list = fetch_optionseries(asset, asset_type_ui)
+                if not st.session_state.series_list:
+                    st.warning("MOEX не вернул ни одной серии. Проверьте тикер.")
         except Exception as e:
             st.error(f"Ошибка загрузки серий: {e}")
             st.session_state.series_list = []
 
     if st.session_state.series_list:
+        # ---- Выбор даты экспирации ----
         options = [f"{s['expiry']} — {s['code']}" for s in st.session_state.series_list]
-        chosen = st.selectbox("Дата экспирации (серия)", options, index=0)
+        chosen = st.selectbox("📅 Дата экспирации (серия)", options, index=0)
         selected = st.session_state.series_list[options.index(chosen)]
         series_code = selected["code"]
         expiry_str = selected["expiry"]
 
+        # >>> подстановка даты в калькулятор <<<
         push_expiry_to_calculator(expiry_str, series_code)
-        st.success(f"📅 Дата {expiry_str} передана в калькулятор (серия {series_code})")
+        st.success(f"📅 Дата **{expiry_str}** передана в калькулятор (серия `{series_code}`). "
+                   f"Откройте вкладку «🧮 Калькулятор», чтобы увидеть её в поле «Дата экспирации».")
 
+        # ---- Информация о серии ----
         try:
             info = fetch_series_info(asset, asset_type_ui, series_code)
             with st.expander("📋 Информация об опционной серии"):
@@ -209,6 +277,7 @@ with tab_board:
         except Exception as e:
             st.warning(f"Не удалось загрузить информацию: {e}")
 
+        # ---- Доска ----
         try:
             board = fetch_optionboard(asset, asset_type_ui, series_code)
         except Exception as e:
@@ -217,7 +286,7 @@ with tab_board:
 
         if board:
             calls = board.get('call') or []
-            puts = board.get('put') or []
+            puts  = board.get('put')  or []
             central = board.get('central_strike')
 
             strikes = sorted({c['strike'] for c in calls} | {p['strike'] for p in puts})
@@ -244,36 +313,45 @@ with tab_board:
                 })
             df = pd.DataFrame(rows)
 
-            # Мобильный компактный режим
-            compact = st.toggle("📱 Компактный вид (только ключевые столбцы)", value=True)
+            # ---- Управление отображением и подсветкой ----
+            st.markdown("##### 📋 Доска опционов")
+            h1, h2 = st.columns([2, 2])
+            with h1:
+                mode_label = st.radio(
+                    "Подсветка «выгодных» греков",
+                    ["Выкл","Для покупателя","Для продавца"],
+                    horizontal=True, index=1,
+                    help="Зелёные ячейки — значения, выгодные выбранной стороне сделки.",
+                )
+            with h2:
+                compact = st.toggle("📱 Компактный вид (ключевые столбцы)", value=False,
+                                    help="Удобно для телефона. Выключите, чтобы увидеть все 22 столбца.")
+
+            mode = {'Выкл':'off','Для покупателя':'buyer','Для продавца':'seller'}[mode_label]
+
             if compact:
                 cols = ["Strike","IV_%","Call_Bid","Call_Offer","Put_Bid","Put_Offer"]
+                # переносим греки в компактный вид для подсветки
+                cols += ["Call_Delta","Call_Theta","Put_Delta","Put_Theta"]
                 df_show = df[cols]
             else:
                 df_show = df
 
-            def style_row(row):
-                strike = row.get("Strike")
-                is_central = central is not None and abs(strike - central) < 0.01
-                call_bg = "#e1e3fb" if is_central else "#dbf3df"
-                put_bg = "#fee5cd" if is_central else "#ffcdce"
-                strike_bg = "#e3e7ec"
-                styles = []
-                for col in row.index:
-                    if col.startswith("Call_"): styles.append(f"background-color:{call_bg}")
-                    elif col.startswith("Put_"): styles.append(f"background-color:{put_bg}")
-                    elif col in ("Strike","IV_%"): styles.append(f"background-color:{strike_bg};font-weight:bold")
-                    else: styles.append("")
-                return styles
-
-            st.subheader("📋 Доска опционов")
             st.caption(f"Центральный страйк: **{central if central is not None else '—'}** · "
-                       f"страйков: {len(df)}")
+                       f"страйков: {len(df)} · "
+                       f"режим подсветки: **{mode_label}**")
+
             st.dataframe(
-                df_show.style.apply(style_row, axis=1).format(precision=4, na_rep="—"),
-                use_container_width=True, height=460,
+                style_board(df_show, central, mode),
+                use_container_width=True,
+                height=520 if compact else 620,
             )
 
+            if mode != 'off':
+                st.caption("🟩 Зелёный — «выгодное» значение по выбранной стратегии. "
+                           "Пороги Delta/Theta/IV задаются в функции `favorable_color()`.")
+
+            # ---- Улыбка волатильности ----
             try:
                 points = fetch_volatility_graph(asset, series_code, asset_type_ui)
             except Exception:
@@ -289,10 +367,12 @@ with tab_board:
                     name='IV, %',
                 ))
                 fig.update_layout(
-                    title="📈 Улыбка волатильности",
+                    title="📈 Улыбка волатильности (IV по страйкам)",
                     xaxis_title="Страйк", yaxis_title="IV, %",
-                    height=340, margin=dict(l=10, r=10, t=50, b=20),
+                    height=360, margin=dict(l=10, r=10, t=50, b=20),
                 )
                 st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("MOEX не вернул данные улыбки волатильности для этой серии.")
     else:
         st.info("Введите тикер базового актива и нажмите «Загрузить серии».")
