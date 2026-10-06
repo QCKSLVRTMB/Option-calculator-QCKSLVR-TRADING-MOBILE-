@@ -1,3 +1,8 @@
+# ============================================================
+# config.toml — настройки Streamlit для мобильного приложения
+# (сборка APK через WEBTOAPP / Android WebView)
+# ============================================================
+
 [theme]
 base = "light"
 primaryColor = "#1e5a7a"
@@ -5,7 +10,33 @@ backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#eef2f5"
 textColor = "#1a3b4f"
 font = "sans serif"
+baseFontSize = 14
+# Радиус углов у элементов (для более «нативного» вида на смартфоне)
+baseRadius = 0.6
 
 [server]
 headless = true
+# CORS и XSRF отключены — критично для работы внутри WebView
+# (iframe с index.html синхронизируется с родителем через postMessage)
 enableCORS = false
+enableXsrfProtection = false
+# Увеличенный лимит — на всякий случай, если будут большие CSV/XLSX
+maxUploadSize = 200
+maxMessageSize = 200
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Скрываем верхнюю панель Streamlit (Running / Deploy / Share)
+# — на смартфоне она только мешает и занимает место
+toolbarMode = "minimal"
+# Скрываем автоматическую навигацию по страницам (у нас один app.py)
+showSidebarNavigation = false
+# Не разворачиваем длинные стек-трейсы на весь экран
+showErrorDetails = "none"
+# Отключаем предупреждение о прямом запуске скрипта
+showWarningOnDirectExecution = false
+
+[logger]
+level = "warning"
