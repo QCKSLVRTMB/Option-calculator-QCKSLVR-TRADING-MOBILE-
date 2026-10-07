@@ -36,7 +36,6 @@
     font-size: .78rem;
   }
 
-  /* -------- Панель модели -------- */
   .model-panel {
     background: white;
     border-radius: 14px;
@@ -55,35 +54,69 @@
     font-style: italic;
   }
 
-  /* -------- Панели покупок/продаж -------- */
   .two-columns {
     display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: start; /* важно: чтобы свёрнутая панель не растягивалась по высоте */
   }
   @media (min-width: 720px) {
     .two-columns { grid-template-columns: 1fr 1fr; gap: 14px; }
   }
+
+  /* ============ Панель-спойлер ============ */
   .panel {
     background: white;
     border-radius: 14px;
     box-shadow: 0 6px 18px -8px rgba(0,0,0,.10);
     overflow: hidden;
+    /* убираем нативный маркер details */
+    list-style: none;
   }
-  .panel-buy .panel-header { background: #9c00ff; }
-  .panel-sell .panel-header { background: #fb92f0; }
+  .panel > summary { list-style: none; }
+  .panel > summary::-webkit-details-marker { display: none; }
+  .panel > summary::marker { display: none; }
+
+  /* Заголовок-триггер */
   .panel-header {
     color: white;
-    padding: 8px 14px;
+    padding: 10px 14px;
     font-size: .82rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: filter .15s;
   }
+  .panel-header:active { filter: brightness(0.92); }
+  .panel-buy .panel-header { background: #9c00ff; }
+  .panel-sell .panel-header { background: #fb92f0; }
+
+  .panel-header .chevron {
+    display: inline-block;
+    font-size: 1.1rem;
+    line-height: 1;
+    transform: rotate(180deg);
+    transition: transform .2s ease;
+    opacity: 0.95;
+    margin-left: 10px;
+  }
+  /* поворачиваем шеврон у закрытой панели */
+  .panel:not([open]) .panel-header .chevron {
+    transform: rotate(0deg);
+  }
+
   .panel-body { padding: 10px 12px; }
 
-  /* -------- Форма: grid на мобильном, flex на десктопе -------- */
+  /* Фолбэк для WebView без поддержки details */
+  .panel:not([open]) .panel-body { display: none; }
+
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -91,7 +124,6 @@
     margin-bottom: 8px;
   }
   .form-row.single { grid-template-columns: 1fr; }
-  .form-row.three  { grid-template-columns: 1fr 1fr 1fr; }
   @media (max-width: 400px) {
     .form-row { grid-template-columns: 1fr; }
   }
@@ -113,10 +145,8 @@
     border-radius: 10px;
     border: 1px solid #cfdfe9;
     background: #fff;
-    /* 16px предотвращает авто-зум в iOS/Android */
     font-size: 16px;
     min-height: 40px;
-    /* На тач-устройствах убираем нативные тени */
     -webkit-appearance: none;
     appearance: none;
   }
@@ -166,7 +196,6 @@
   }
   #strikeBuy, #strikeSell { font-weight: 700; }
 
-  /* -------- Блок результатов -------- */
   .result-block {
     margin-top: 8px;
     border-radius: 12px;
@@ -207,19 +236,17 @@
     white-space: nowrap;
   }
 
-  /* -------- Кнопки действий: на мобильном — колонкой -------- */
   .buttons-row {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    justify-content: center;
     gap: 8px;
     margin-bottom: 10px;
   }
-  @media (min-width: 560px) {
-    .buttons-row { grid-template-columns: auto auto 1fr; }
+  .buttons-row button {
+    max-width: 240px;
+    width: 100%;
   }
-  .buttons-row button { width: 100%; }
 
-  /* -------- Панель спреда -------- */
   .spread-panel {
     background: #f9fbfd;
     border-radius: 14px;
@@ -266,9 +293,12 @@
   </div>
 
   <div class="two-columns">
-    <!-- ============ ПОКУПКА ============ -->
-    <div class="panel panel-buy">
-      <div class="panel-header">Уровень покупок</div>
+    <!-- ============ ПОКУПКА (спойлер) ============ -->
+    <details class="panel panel-buy" open>
+      <summary class="panel-header">
+        <span>Уровень покупок</span>
+        <span class="chevron">▾</span>
+      </summary>
       <div class="panel-body">
         <div class="form-row">
           <div class="form-group"><label>Тип опциона</label>
@@ -304,11 +334,14 @@
           <div class="greeks" id="greeksBuy"></div>
         </div>
       </div>
-    </div>
+    </details>
 
-    <!-- ============ ПРОДАЖА ============ -->
-    <div class="panel panel-sell">
-      <div class="panel-header">Уровень продаж</div>
+    <!-- ============ ПРОДАЖА (спойлер) ============ -->
+    <details class="panel panel-sell" open>
+      <summary class="panel-header">
+        <span>Уровень продаж</span>
+        <span class="chevron">▾</span>
+      </summary>
       <div class="panel-body">
         <div class="form-row">
           <div class="form-group"><label>Тип опциона</label>
@@ -344,14 +377,11 @@
           <div class="greeks" id="greeksSell"></div>
         </div>
       </div>
-    </div>
+    </details>
   </div>
 
   <div class="buttons-row">
-    <button id="resetBtn" class="btn-secondary">Сброс</button>
-    <button id="importCsvBtn" class="btn-secondary">Импорт CSV</button>
-    <input type="file" id="importCsvInput" accept=".csv" style="display:none;">
-    <button id="exportCsvBtn">Экспорт отчёта (CSV)</button>
+    <button id="resetBtn" class="btn-secondary">↺ Сброс полей</button>
   </div>
 
   <div class="spread-panel">
@@ -540,7 +570,6 @@
     validateCurrentDates();
     const model = document.getElementById('pricingModel').value;
 
-    // ---- Покупка ----
     const typeBuy = document.getElementById('optionTypeBuy').value;
     const KBuy = parseFloat(document.getElementById('strikeBuy').value);
     const SBuy = parseFloat(document.getElementById('priceBuy').value);
@@ -572,7 +601,6 @@
       `<div class="greek">Δ ${gB.delta}</div><div class="greek">Γ ${gB.gamma}</div>` +
       `<div class="greek">Θ ${gB.theta}</div><div class="greek">ν ${gB.vega}</div>`;
 
-    // ---- Продажа ----
     const typeSell = document.getElementById('optionTypeSell').value;
     const KSell = parseFloat(document.getElementById('strikeSell').value);
     const SSell = parseFloat(document.getElementById('priceSell').value);
@@ -640,102 +668,6 @@
     }
   }
 
-  // ---- Экспорт CSV ----
-  function _csvEscape(v) {
-    const s = String(v ?? '');
-    if (s.includes(',') || s.includes('"') || s.includes('\n'))
-      return '"' + s.replace(/"/g, '""') + '"';
-    return s;
-  }
-  function _csvRow(arr) { return arr.map(_csvEscape).join(','); }
-  function exportCSV(){
-    const g = id => document.getElementById(id)?.value || '';
-    const gt = id => document.getElementById(id)?.innerText || '';
-    const lines = [];
-    lines.push(_csvRow(['ОТЧЁТ КАЛЬКУЛЯТОРА ОПЦИОНОВ QCKSLVR TRADING']));
-    lines.push(_csvRow(['Дата экспорта', new Date().toISOString().slice(0,19).replace('T',' ')]));
-    lines.push('');
-    lines.push(_csvRow(['=== КАЛЬКУЛЯТОР ===']));
-    lines.push(_csvRow(['Модель', g('pricingModel')]));
-    lines.push(_csvRow(['Тип опциона покупки', g('optionTypeBuy')]));
-    lines.push(_csvRow(['Страйк покупки', g('strikeBuy')]));
-    lines.push(_csvRow(['Уровень покупок', g('priceBuy')]));
-    lines.push(_csvRow(['Экспирация покупки', g('expiryDateBuy')]));
-    lines.push(_csvRow(['Дата покупки', g('currentDateBuy')]));
-    lines.push(_csvRow(['Ставка покупки', g('riskFreeBuy')]));
-    lines.push(_csvRow(['Волатильность покупки', g('volatilityBuy')]));
-    lines.push(_csvRow(['Дивиденды покупки', g('dividendBuy')]));
-    lines.push(_csvRow(['Цена покупки (теор.)', gt('priceBuyResult')]));
-    lines.push(_csvRow(['BE покупки', gt('beBuy')]));
-    lines.push(_csvRow(['Тип опциона продажи', g('optionTypeSell')]));
-    lines.push(_csvRow(['Страйк продажи', g('strikeSell')]));
-    lines.push(_csvRow(['Уровень продаж', g('priceSell')]));
-    lines.push(_csvRow(['Экспирация продажи', g('expiryDateSell')]));
-    lines.push(_csvRow(['Дата продажи', g('currentDateSell')]));
-    lines.push(_csvRow(['Ставка продажи', g('riskFreeSell')]));
-    lines.push(_csvRow(['Волатильность продажи', g('volatilitySell')]));
-    lines.push(_csvRow(['Дивиденды продажи', g('dividendSell')]));
-    lines.push(_csvRow(['Цена продажи (теор.)', gt('priceSellResult')]));
-    lines.push(_csvRow(['BE продажи', gt('beSell')]));
-    lines.push(_csvRow(['Спред', gt('spreadResult')]));
-    const csv = lines.join('\n');
-    const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8;'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    const dateStr = new Date().toISOString().slice(0,16).replace(/[:T]/g, '-');
-    a.download = `calc_${dateStr}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  }
-
-  function importCSV(file){
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const lines = e.target.result.split(/\r?\n/);
-        const map = {};
-        for (const line of lines) {
-          if (!line || line.startsWith('===') || line.startsWith('ОТЧЁТ')) continue;
-          const idx = line.indexOf(',');
-          if (idx < 0) continue;
-          map[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
-        }
-        const setV = (id, key) => {
-          if (map[key] !== undefined) {
-            const el = document.getElementById(id);
-            if (el) el.value = map[key];
-          }
-        };
-        setV('pricingModel', 'Модель');
-        setV('optionTypeBuy', 'Тип опциона покупки');
-        setV('priceBuy', 'Уровень покупок');
-        setV('expiryDateBuy', 'Экспирация покупки');
-        setV('currentDateBuy', 'Дата покупки');
-        setV('riskFreeBuy', 'Ставка покупки');
-        setV('volatilityBuy', 'Волатильность покупки');
-        setV('dividendBuy', 'Дивиденды покупки');
-        setV('optionTypeSell', 'Тип опциона продажи');
-        setV('priceSell', 'Уровень продаж');
-        setV('expiryDateSell', 'Экспирация продажи');
-        setV('currentDateSell', 'Дата продажи');
-        setV('riskFreeSell', 'Ставка продажи');
-        setV('volatilitySell', 'Волатильность продажи');
-        setV('dividendSell', 'Дивиденды продажи');
-        const sb = map['Страйк покупки'], ss = map['Страйк продажи'];
-        const sbEl = document.getElementById('strikeBuy');
-        if (sb !== undefined && sbEl && Array.from(sbEl.options).some(o => o.value === sb)) {
-          sbEl.value = sb; applySelectColor(sbEl);
-        }
-        const ssEl = document.getElementById('strikeSell');
-        if (ss !== undefined && ssEl && Array.from(ssEl.options).some(o => o.value === ss)) {
-          ssEl.value = ss; applySelectColor(ssEl);
-        }
-        updatePrices(); saveSettings(); syncToParent();
-      } catch (err) { alert('Ошибка импорта CSV: ' + err.message); }
-    };
-    reader.readAsText(file, 'UTF-8');
-  }
-
   // ---- Обработчики ----
   ['optionTypeBuy','optionTypeSell','priceBuy','priceSell',
    'currentDateBuy','currentDateSell','expiryDateBuy','expiryDateSell',
@@ -748,7 +680,6 @@
    'volatilityBuy','volatilitySell','dividendBuy','dividendSell']
     .forEach(id => document.getElementById(id)?.addEventListener('input', syncToParent));
 
-  // Ручное изменение даты экспирации — сбросить подпись источника
   ['expiryDateBuy','expiryDateSell'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', function(){
       const suf = id.endsWith('Buy') ? 'Buy' : 'Sell';
@@ -794,15 +725,6 @@
     if (__strikeList.length) renderStrikes();
     updatePrices(); saveSettings(); syncToParent();
   });
-  document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
-  document.getElementById('importCsvBtn').addEventListener('click', () => {
-    document.getElementById('importCsvInput').click();
-  });
-  document.getElementById('importCsvInput').addEventListener('change', (e) => {
-    const f = e.target.files[0];
-    if (f) importCSV(f);
-    e.target.value = '';
-  });
 
   // ============================================================
   // ИНИЦИАЛИЗАЦИЯ
@@ -820,14 +742,12 @@
 
     const inj = __INJECT__ || {};
 
-    // 1. Страйки
     if (Array.isArray(inj.strikes) && inj.strikes.length) {
       __strikeList = inj.strikes.slice();
       __centralStrike = (inj.central_strike != null) ? inj.central_strike : null;
       renderStrikes();
     }
 
-    // 2. Дата экспирации
     if (inj.expiry && /^\d{4}-\d{2}-\d{2}$/.test(inj.expiry)) {
       ['expiryDateBuy','expiryDateSell'].forEach(id => {
         const el = document.getElementById(id);
@@ -840,23 +760,18 @@
       });
     }
 
-    // 3. Безрисковая ставка
     if (inj.rf_buy != null) {
       document.getElementById('riskFreeBuy').value = Number(inj.rf_buy).toFixed(4);
     }
     if (inj.rf_sell != null) {
       document.getElementById('riskFreeSell').value = Number(inj.rf_sell).toFixed(4);
     }
-
-    // 4. Дивиденды (доля, не %)
     if (inj.div_buy != null) {
       document.getElementById('dividendBuy').value = (Number(inj.div_buy) * 100).toFixed(4);
     }
     if (inj.div_sell != null) {
       document.getElementById('dividendSell').value = (Number(inj.div_sell) * 100).toFixed(4);
     }
-
-    // 5. Волатильность
     if (inj.vol_buy != null) {
       document.getElementById('volatilityBuy').value = Number(inj.vol_buy).toFixed(2);
     } else {
@@ -867,8 +782,6 @@
     } else {
       document.getElementById('volatilitySell').value = '30';
     }
-
-    // 6. Уровни из alerts
     if (inj.alerts) {
       if (inj.alerts.buy != null) {
         document.getElementById('priceBuy').value = Number(inj.alerts.buy).toFixed(2);
@@ -878,7 +791,6 @@
       }
     }
 
-    // 7. Даты — форсируем сегодня
     document.getElementById('currentDateBuy').value = today;
     document.getElementById('currentDateSell').value = today;
 
