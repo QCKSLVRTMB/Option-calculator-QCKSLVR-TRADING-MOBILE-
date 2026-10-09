@@ -23,38 +23,35 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-if "cache_cleared_v6" not in st.session_state:
+if "cache_cleared_v7" not in st.session_state:
     st.cache_data.clear()
-    st.session_state["cache_cleared_v6"] = True
+    st.session_state["cache_cleared_v7"] = True
 
 # ==================================================================
 # ==================== МОБИЛЬНЫЙ CSS ===============================
 # ==================================================================
 st.markdown("""
 <style>
-/* --- Основной контейнер: минимальные боковые отступы, только вертикальный скролл --- */
 .block-container {
     padding-top: 0.3rem !important;
     padding-bottom: 1rem !important;
-    padding-left: 0.45rem !important;
-    padding-right: 0.45rem !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
     max-width: 100% !important;
 }
 [data-testid="stAppViewContainer"] > .main {
     overflow-x: hidden !important;
 }
-/* Скрываем шапку/футер/меню Streamlit — нативный вид в APK */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header[data-testid="stHeader"] {display: none;}
 
-/* --- Заголовки компактнее --- */
-h1 {font-size: 1.1rem !important; margin: 0.1rem 0 0.4rem 0 !important; padding: 0 !important;}
-h2 {font-size: 1rem !important; margin: 0.15rem 0 0.35rem 0 !important;}
-h3 {font-size: 0.92rem !important; margin: 0.15rem 0 0.3rem 0 !important;}
-p, label, .stMarkdown {font-size: 0.85rem;}
+h1 {font-size: 1.05rem !important; margin: 0.1rem 0 0.35rem 0 !important; padding: 0 !important;}
+h2 {font-size: 0.98rem !important; margin: 0.15rem 0 0.3rem 0 !important;}
+h3 {font-size: 0.9rem !important; margin: 0.15rem 0 0.25rem 0 !important;}
+p, label, .stMarkdown {font-size: 0.82rem;}
 
-/* --- Вкладки: горизонтальный скролл, компактные --- */
+/* --- Вкладки --- */
 div[data-testid="stTabs"] > div:first-child {
     overflow-x: auto !important;
     flex-wrap: nowrap !important;
@@ -64,70 +61,81 @@ div[data-testid="stTabs"] > div:first-child {
 }
 div[data-testid="stTabs"] > div:first-child::-webkit-scrollbar {display: none;}
 div[data-testid="stTabs"] button[role="tab"] {
-    padding: 4px 7px !important;
-    font-size: 0.72rem !important;
+    padding: 4px 6px !important;
+    font-size: 0.68rem !important;
     white-space: nowrap;
-    min-height: 30px;
+    min-height: 28px;
     line-height: 1.1;
 }
 
-/* --- Горизонтальные блоки: минимальные зазоры --- */
-div[data-testid="stHorizontalBlock"] {gap: 0.3rem !important;}
+/* --- Колонки: минимальные зазоры --- */
+div[data-testid="stHorizontalBlock"] {gap: 0.25rem !important;}
 
-/* --- Ввод и кнопки: компактные, но с крупным шрифтом (нет автозума) --- */
+/* --- Поля ввода: компактные, но защита от автозума --- */
 div[data-testid="stTextInput"] input,
 div[data-testid="stNumberInput"] input,
 div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
-    font-size: 15px !important;
-    min-height: 34px !important;
-    padding: 4px 8px !important;
+    font-size: 14px !important;
+    min-height: 30px !important;
+    padding: 2px 6px !important;
 }
 div[data-testid="stDateInput"] input {
-    font-size: 15px !important;
-    min-height: 34px !important;
+    font-size: 14px !important;
+    min-height: 30px !important;
+    padding: 2px 6px !important;
 }
+div[data-testid="stNumberInput"] button {
+    min-height: 30px !important;
+    padding: 0 4px !important;
+}
+
+/* --- Кнопки --- */
 div[data-testid="stButton"] > button,
 div[data-testid="stDownloadButton"] > button,
-div[data-testid="stFormSubmitButton"] > button {
-    min-height: 34px !important;
-    font-size: 0.8rem !important;
-    padding: 3px 10px !important;
-}
+div[data-testid="stFormSubmitButton"] > button,
 div[data-testid="stPopover"] > button {
-    min-height: 34px !important;
-    font-size: 0.8rem !important;
-    padding: 3px 10px !important;
+    min-height: 30px !important;
+    font-size: 0.75rem !important;
+    padding: 2px 8px !important;
 }
 
-/* --- Метрики компактнее --- */
-div[data-testid="stMetric"] > div {padding: 3px 6px !important;}
-div[data-testid="stMetricValue"] {font-size: 0.95rem !important;}
-div[data-testid="stMetricLabel"] {font-size: 0.68rem !important;}
+/* --- Метрики --- */
+div[data-testid="stMetric"] > div {padding: 3px 5px !important;}
+div[data-testid="stMetricValue"] {font-size: 0.9rem !important;}
+div[data-testid="stMetricLabel"] {font-size: 0.62rem !important;}
 
-/* --- Expander компактнее --- */
-details {margin-bottom: 0.25rem;}
+/* --- Expander --- */
+details {margin-bottom: 0.2rem;}
 div[data-testid="stExpander"] > details > summary {
-    padding: 5px 8px !important;
-    font-size: 0.82rem;
-    min-height: 34px;
+    padding: 4px 8px !important;
+    font-size: 0.78rem;
+    min-height: 30px;
 }
 
-/* --- Dataframe / DataEditor: узкий шрифт --- */
-div[data-testid="stDataFrame"], div[data-testid="stDataEditor"] {
-    font-size: 12px;
+/* --- 🔧 ЦЕНТРИРОВАНИЕ ЯЧЕЕК В ТАБЛИЦАХ (data_editor и dataframe) --- */
+div[data-testid="stDataEditor"] td,
+div[data-testid="stDataEditor"] th,
+div[data-testid="stDataFrame"] td,
+div[data-testid="stDataFrame"] th,
+div[data-testid="stDataEditor"] [role="gridcell"],
+div[data-testid="stDataFrame"] [role="gridcell"] {
+    text-align: center !important;
+    justify-content: center !important;
+}
+div[data-testid="stDataEditor"] td input,
+div[data-testid="stDataEditor"] [role="gridcell"] input {
+    text-align: center !important;
 }
 
-/* --- Форма (Position) --- */
+/* --- Форма --- */
 [data-testid="stForm"] {
     border: 1px solid #cfdfe9 !important;
     border-radius: 10px !important;
-    padding: 8px 10px !important;
+    padding: 6px 8px !important;
 }
-
-/* --- Горизонтальный скролл для позиций (fallback, если data_editor не уместится) --- */
-div[data-testid="stDataEditor"] {
-    overflow-x: auto !important;
-    max-width: 100% !important;
+[data-testid="stForm"] label {
+    font-size: 0.68rem !important;
+    margin-bottom: 1px !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -135,10 +143,21 @@ div[data-testid="stDataEditor"] {
 # ==================================================================
 # ==================== PLOTLY CONFIG ===============================
 # ==================================================================
-# 🔧 staticPlot=True — графики не реагируют на тапы/свайпы/зум.
-# Перерисовываются только при изменении данных (Streamlit rerun).
+# 🔧 Статичные графики (D1, H1, улыбка IV) — не реагируют на тапы
 _PLOTLY_STATIC_CONFIG = {
     'staticPlot': True,
+    'displayModeBar': False,
+    'displaylogo': False,
+    'scrollZoom': False,
+    'doubleClick': False,
+    'showTips': False,
+    'responsive': True,
+}
+
+# 🔧 Интерактивный профиль: разрешён hover (spikeline следует за пальцем),
+#    но запрещены зум, масштаб, панорамирование
+_PLOTLY_HOVER_CONFIG = {
+    'staticPlot': False,
     'displayModeBar': False,
     'displaylogo': False,
     'scrollZoom': False,
@@ -390,54 +409,6 @@ TV_TICKER_MAP = {
 
 def resolve_tv_ticker(asset_code: str, asset_type_ui: str):
     return TV_TICKER_MAP.get(asset_type_ui, {}).get(asset_code)
-
-
-# ================= Предустановленные стратегии =================
-PREDEFINED_STRATEGIES = {
-    "Long Call": {"category": "Одиночные", "description": "Покупка опциона Call — ставка на рост",
-        "strike_order": [], "legs": [{"label": "Страйк (Buy Call)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K"}]},
-    "Long Put": {"category": "Одиночные", "description": "Покупка опциона Put — ставка на падение",
-        "strike_order": [], "legs": [{"label": "Страйк (Buy Put)", "option": "Put", "side": "Buy", "qty": 1, "strike_group": "K"}]},
-    "Short Call": {"category": "Одиночные", "description": "Продажа опциона Call",
-        "strike_order": [], "legs": [{"label": "Страйк (Sell Call)", "option": "Call", "side": "Sell", "qty": 1, "strike_group": "K"}]},
-    "Short Put": {"category": "Одиночные", "description": "Продажа опциона Put",
-        "strike_order": [], "legs": [{"label": "Страйк (Sell Put)", "option": "Put", "side": "Sell", "qty": 1, "strike_group": "K"}]},
-    "Bull Call Spread": {"category": "Вертикальные спреды", "description": "Buy Call (низ) + Sell Call (верх)",
-        "strike_order": ["K_low", "K_high"], "legs": [
-            {"label": "Buy Call (низ)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K_low"},
-            {"label": "Sell Call (верх)", "option": "Call", "side": "Sell", "qty": 1, "strike_group": "K_high"}]},
-    "Bear Call Spread": {"category": "Вертикальные спреды", "description": "Sell Call (низ) + Buy Call (верх)",
-        "strike_order": ["K_low", "K_high"], "legs": [
-            {"label": "Sell Call (низ)", "option": "Call", "side": "Sell", "qty": 1, "strike_group": "K_low"},
-            {"label": "Buy Call (верх)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K_high"}]},
-    "Bull Put Spread": {"category": "Вертикальные спреды", "description": "Sell Put (верх) + Buy Put (низ)",
-        "strike_order": ["K_low", "K_high"], "legs": [
-            {"label": "Buy Put (низ)", "option": "Put", "side": "Buy", "qty": 1, "strike_group": "K_low"},
-            {"label": "Sell Put (верх)", "option": "Put", "side": "Sell", "qty": 1, "strike_group": "K_high"}]},
-    "Bear Put Spread": {"category": "Вертикальные спреды", "description": "Buy Put (верх) + Sell Put (низ)",
-        "strike_order": ["K_low", "K_high"], "legs": [
-            {"label": "Sell Put (низ)", "option": "Put", "side": "Sell", "qty": 1, "strike_group": "K_low"},
-            {"label": "Buy Put (верх)", "option": "Put", "side": "Buy", "qty": 1, "strike_group": "K_high"}]},
-    "Long Butterfly (Call)": {"category": "Бабочки", "description": "Buy 1 Call + Sell 2 Call + Buy 1 Call",
-        "strike_order": ["K1", "K2", "K3"], "legs": [
-            {"label": "Buy Call (K1 — низ)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K1"},
-            {"label": "Sell Call ×2 (K2)", "option": "Call", "side": "Sell", "qty": 2, "strike_group": "K2"},
-            {"label": "Buy Call (K3 — верх)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K3"}]},
-    "Long Straddle": {"category": "Straddle / Strangle", "description": "Buy Call + Buy Put на одном страйке",
-        "strike_order": [], "legs": [
-            {"label": "Страйк (Buy Call + Buy Put)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K"},
-            {"label": "тот же страйк", "option": "Put", "side": "Buy", "qty": 1, "strike_group": "K"}]},
-    "Short Straddle": {"category": "Straddle / Strangle", "description": "Sell Call + Sell Put на одном страйке",
-        "strike_order": [], "legs": [
-            {"label": "Страйк (Sell Call + Sell Put)", "option": "Call", "side": "Sell", "qty": 1, "strike_group": "K"},
-            {"label": "тот же страйк", "option": "Put", "side": "Sell", "qty": 1, "strike_group": "K"}]},
-    "Iron Condor": {"category": "Кондоры", "description": "Buy Put + Sell Put + Sell Call + Buy Call",
-        "strike_order": ["K1", "K2", "K3", "K4"], "legs": [
-            {"label": "Buy Put (K1)", "option": "Put", "side": "Buy", "qty": 1, "strike_group": "K1"},
-            {"label": "Sell Put (K2)", "option": "Put", "side": "Sell", "qty": 1, "strike_group": "K2"},
-            {"label": "Sell Call (K3)", "option": "Call", "side": "Sell", "qty": 1, "strike_group": "K3"},
-            {"label": "Buy Call (K4)", "option": "Call", "side": "Buy", "qty": 1, "strike_group": "K4"}]},
-}
 
 
 # ================= HTTP-клиент ISS =================
@@ -709,7 +680,7 @@ def fetch_last_price_from_iss(secid: str, asset_type_ui: str):
     return {"last": None, "secid": secid, "source": "нет цены"}
 
 
-# ================= Загрузка Google Sheets =================
+# ================= Google Sheets =================
 @st.cache_data(ttl=30, show_spinner=False)
 def load_google_sheet_cached(sheet_url: str, cache_buster: int):
     try:
@@ -719,9 +690,9 @@ def load_google_sheet_cached(sheet_url: str, cache_buster: int):
         df = pd.read_excel(BytesIO(resp.content), engine="openpyxl")
         return df, None
     except requests.exceptions.Timeout:
-        return pd.DataFrame(), "Таймаут при обращении к Google Sheets"
+        return pd.DataFrame(), "Таймаут Google Sheets"
     except Exception as e:
-        return pd.DataFrame(), f"Ошибка загрузки Google Sheets: {e}"
+        return pd.DataFrame(), f"Ошибка Google Sheets: {e}"
 
 
 def _normalize_alerts_df(_xls: pd.DataFrame):
@@ -740,7 +711,7 @@ def _normalize_alerts_df(_xls: pd.DataFrame):
     required = ["Тикер БА", "Категория БА", "Уровень покупок", "Уровень продаж"]
     missing = [c for c in required if c not in _xls.columns]
     if missing:
-        return pd.DataFrame(), f"В таблице нет колонок: {', '.join(missing)}"
+        return pd.DataFrame(), f"Нет колонок: {', '.join(missing)}"
     _xls["Уровень покупок"] = pd.to_numeric(_xls["Уровень покупок"], errors="coerce")
     _xls["Уровень продаж"] = pd.to_numeric(_xls["Уровень продаж"], errors="coerce")
     _xls = _xls.dropna(subset=["Тикер БА", "Уровень покупок", "Уровень продаж"])
@@ -794,8 +765,9 @@ def fetch_futures_info_iss(secid: str):
     if not secid:
         return None
     url = f"https://iss.moex.com/iss/engines/futures/markets/forts/securities/{secid}.json"
-    params = {"iss.meta": "off", "iss.only": "securities,marketdata"}
-    data = iss_get_json(url, params=params, timeout=15)
+    data = iss_get_json(url,
+                        params={"iss.meta": "off", "iss.only": "securities,marketdata"},
+                        timeout=15)
     if data is None:
         return None
     result = {"last": None, "expiration": None, "go": None, "secid": secid}
@@ -826,8 +798,9 @@ def fetch_stock_info_iss(secid: str):
     if not secid:
         return None
     url = f"https://iss.moex.com/iss/engines/stock/markets/shares/securities/{secid}.json"
-    params = {"iss.meta": "off", "iss.only": "securities,marketdata"}
-    data = iss_get_json(url, params=params, timeout=15)
+    data = iss_get_json(url,
+                        params={"iss.meta": "off", "iss.only": "securities,marketdata"},
+                        timeout=15)
     if data is None:
         return None
     result = {"last": None, "shortname": None, "secid": secid}
@@ -857,8 +830,9 @@ def fetch_index_info_iss(secid: str):
     if not secid:
         return None
     url = f"https://iss.moex.com/iss/engines/stock/markets/index/securities/{secid}.json"
-    params = {"iss.meta": "off", "iss.only": "securities,marketdata"}
-    data = iss_get_json(url, params=params, timeout=15)
+    data = iss_get_json(url,
+                        params={"iss.meta": "off", "iss.only": "securities,marketdata"},
+                        timeout=15)
     if data is None:
         return None
     result = {"last": None, "secid": secid, "expiration": None}
@@ -882,7 +856,6 @@ def fetch_ba_iss_info(secid: str, asset_type_ui: str):
     return fetch_stock_info_iss(secid)
 
 
-# ================= Список контрактов фьючерса =================
 @st.cache_data(ttl=3600, show_spinner=False)
 def fetch_futures_contracts_list(asset_code: str):
     if not asset_code:
@@ -930,7 +903,7 @@ def apply_parity_delta(position: dict) -> dict:
     return position
 
 
-# ================= Оповещения: search & cache =================
+# ================= Оповещения =================
 def find_alert_levels(ticker: str, category: str = None):
     df = st.session_state.get("alerts_df")
     if df is None or df.empty:
@@ -1191,15 +1164,13 @@ def fetch_series_overview(asset: str, asset_type_ui: str):
             days_to = None
             expiry_disp = expiry
         rows.append({
-            "БА":            asset,
             "Тип":           series_type_short,
             "Экспирация":    expiry_disp,
             "_expiry_raw":   expiry,
-            "_days_to":      days_to,
-            "Объём, ₽":      vol_rub,
-            "Об.контр.":     vol_contr,
-            "Откр.поз.":     oi,
-            "Изменение, ₽":  oi_change,
+            "Объём":         vol_rub,
+            "Контр":         vol_contr,
+            "OI":            oi,
+            "Δ OI":          oi_change,
             "_series_code":  s["code"],
         })
     return pd.DataFrame(rows)
@@ -1262,7 +1233,7 @@ def get_last_close_price(secid: str, engine: str, market: str):
         return None
 
 
-# ================= Payoff-расчёты =================
+# ================= Payoff =================
 def _months_between(d1: date, d2: date) -> float:
     return max((d2 - d1).days, 0) / 365.0
 
@@ -1286,9 +1257,7 @@ def _bs_price_np(S, K, T, r_pct, vol_pct, q_pct, opt_type):
         return max(0.0, S - K) if opt_type == "call" else max(0.0, K - S)
 
 
-def compute_payoff(positions, S_values, comm_func=None, anchor_expiry: str = None,
-                   pricing_date: str = None, vol_default: float = 20.0,
-                   r_default: float = 0.0, q_default: float = 0.0):
+def compute_payoff(positions, S_values, comm_func=None, anchor_expiry: str = None):
     S = np.asarray(S_values, dtype=float)
     pnl = np.zeros_like(S)
     all_expiries = []
@@ -1338,9 +1307,9 @@ def compute_payoff(positions, S_values, comm_func=None, anchor_expiry: str = Non
         else:
             T_remaining = _months_between(anchor_date, leg_expiry)
             opt_type = "call" if p["Опцион"] == "Call" else "put"
-            vol_leg = float(p.get("_vol", vol_default) or vol_default)
-            r_leg = float(p.get("_r", r_default) or r_default)
-            q_leg = float(p.get("_q", q_default) or q_default)
+            vol_leg = float(p.get("_vol", 20.0) or 20.0)
+            r_leg = float(p.get("_r", 0.0) or 0.0)
+            q_leg = float(p.get("_q", 0.0) or 0.0)
             price_at_anchor = np.array([
                 _bs_price_np(Si, K, T_remaining, r_leg, vol_leg, q_leg, opt_type)
                 for Si in S
@@ -1349,15 +1318,17 @@ def compute_payoff(positions, S_values, comm_func=None, anchor_expiry: str = Non
     return pnl
 
 
-def find_breakevens(positions, price_min, price_max, n=500, comm_func=None, anchor_expiry=None):
+def find_breakevens(positions, price_min, price_max, n=500, comm_func=None,
+                    anchor_expiry=None):
     prices = np.linspace(price_min, price_max, n)
-    pnl = compute_payoff(positions, prices, comm_func=comm_func, anchor_expiry=anchor_expiry)
+    pnl = compute_payoff(positions, prices, comm_func=comm_func,
+                          anchor_expiry=anchor_expiry)
     be = []
     for i in range(1, len(prices)):
-        if pnl[i-1] * pnl[i] < 0:
-            denom = pnl[i] - pnl[i-1]
+        if pnl[i - 1] * pnl[i] < 0:
+            denom = pnl[i] - pnl[i - 1]
             if abs(denom) > 1e-12:
-                x0 = prices[i-1] + (prices[i] - prices[i-1]) * (-pnl[i-1]) / denom
+                x0 = prices[i - 1] + (prices[i] - prices[i - 1]) * (-pnl[i - 1]) / denom
                 be.append(float(x0))
     return be
 
@@ -1382,7 +1353,8 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
     price_max = float(df["high"].max()) * 1.03
     if positions:
         be_points = find_breakevens(positions, price_min, price_max,
-                                     n=500, comm_func=comm_func, anchor_expiry=anchor_expiry)
+                                     n=500, comm_func=comm_func,
+                                     anchor_expiry=anchor_expiry)
         segments = [price_min] + sorted(be_points) + [price_max]
         for i in range(len(segments) - 1):
             seg_start = segments[i]
@@ -1398,7 +1370,8 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
         be_points = []
     visible_strikes = []
     if strikes:
-        visible_strikes = sorted(float(s) for s in strikes if price_min <= float(s) <= price_max)
+        visible_strikes = sorted(float(s) for s in strikes
+                                  if price_min <= float(s) <= price_max)
         for K in visible_strikes:
             fig.add_hline(y=K, line=dict(color="#9c00ff", width=1, dash="dot"),
                           opacity=0.45, row=1, col=1)
@@ -1436,12 +1409,12 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
         fig.add_hline(y=level, line=dict(color=line_color, width=2.5), row=1, col=1)
         fig.add_annotation(x=0.5, y=level, xref="paper", yref="y",
                            text=label_txt, showarrow=False,
-                           font=dict(size=10, color=line_color, family="Arial Black"),
+                           font=dict(size=9, color=line_color, family="Arial Black"),
                            bgcolor="rgba(255,255,255,0.85)", yshift=11, row=1, col=1)
         for i, m in enumerate(markers[:6]):
             fig.add_annotation(x=0.5, y=level, xref="paper", yref="y",
                                text=m["text"], showarrow=False,
-                               font=dict(size=10, color=m["color"],
+                               font=dict(size=9, color=m["color"],
                                          family="Consolas, monospace"),
                                bgcolor="rgba(255,255,255,0.88)",
                                xshift=80 + i * 72, yshift=11, row=1, col=1)
@@ -1451,33 +1424,36 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
     if sell_level and sell_level > 0:
         _add_level(sell_level, f"Продажа {sell_level:.2f}", "#fb92f0", sell_markers)
     if current_price is not None and current_price > 0:
-        fig.add_hline(y=current_price, line=dict(color="#1e88e5", width=2, dash="dash"), row=1, col=1)
+        fig.add_hline(y=current_price, line=dict(color="#1e88e5", width=2, dash="dash"),
+                      row=1, col=1)
         fig.add_annotation(x=0.5, y=current_price, xref="paper", yref="y",
                            text=f"Текущая {current_price:.2f}", showarrow=False,
-                           font=dict(size=10, color="#1e88e5", family="Arial Black"),
+                           font=dict(size=9, color="#1e88e5", family="Arial Black"),
                            bgcolor="rgba(255,255,255,0.90)",
-                           bordercolor="#1e88e5", borderwidth=1, yshift=-11, row=1, col=1)
+                           bordercolor="#1e88e5", borderwidth=1,
+                           yshift=-11, row=1, col=1)
     for be in be_points:
         fig.add_hline(y=be, line=dict(color="#00a651", width=1.5, dash="dot"), row=1, col=1)
         fig.add_annotation(x=0.5, y=be, xref="paper", yref="y",
                            text=f"БУ {be:.2f}", showarrow=False,
-                           font=dict(size=10, color="#00a651", family="Arial Black"),
+                           font=dict(size=9, color="#00a651", family="Arial Black"),
                            bgcolor="rgba(255,255,255,0.90)",
-                           bordercolor="#00a651", borderwidth=1, yshift=10, row=1, col=1)
+                           bordercolor="#00a651", borderwidth=1,
+                           yshift=10, row=1, col=1)
     fig.add_trace(go.Scatter(x=[df["begin"].iloc[0], df["begin"].iloc[-1]],
                              y=[price_min, price_max], mode="lines",
                              line=dict(width=0), opacity=0, showlegend=False,
                              hoverinfo="skip", name="_right_axis"),
                   row=1, col=1, secondary_y=True)
-    # 🔧 Высота графика снижена для мобильного
-    fig.update_layout(title=dict(text=title, font=dict(size=12)),
-                      height=340,
-                      margin=dict(l=8, r=8, t=30, b=15),
+    fig.update_layout(title=dict(text=title, font=dict(size=11)),
+                      height=320,
+                      margin=dict(l=6, r=6, t=28, b=12),
                       plot_bgcolor="white", paper_bgcolor="white",
                       hovermode=False, showlegend=False)
     if visible_strikes:
         _strike_vals = [float(k) for k in visible_strikes]
-        _strike_text = [f"{int(k)}" if float(k).is_integer() else f"{k:.2f}" for k in _strike_vals]
+        _strike_text = [f"{int(k)}" if float(k).is_integer() else f"{k:.2f}"
+                         for k in _strike_vals]
     else:
         _strike_vals = None
         _strike_text = None
@@ -1486,14 +1462,14 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
                      tickmode="array" if _strike_vals else "auto",
                      tickvals=_strike_vals if _strike_vals else None,
                      ticktext=_strike_text if _strike_text else None,
-                     tickfont=dict(size=9, color="#9c00ff"),
+                     tickfont=dict(size=8, color="#9c00ff"),
                      showspikes=False, fixedrange=True)
     fig.update_yaxes(showgrid=True, gridcolor="rgba(0,0,0,0.05)",
                      side="left", row=2, col=1,
                      showspikes=False, fixedrange=True)
     fig.update_yaxes(side="right", row=1, col=1, secondary_y=True,
                      showgrid=False, zeroline=False,
-                     tickfont=dict(size=9, color="#1a3b4f"),
+                     tickfont=dict(size=8, color="#1a3b4f"),
                      showspikes=False, title=None, fixedrange=True)
     _x_min_val = df["begin"].min()
     _x_max_val = df["begin"].max()
@@ -1513,7 +1489,6 @@ def render_exchange_chart(df, positions, buy_level, sell_level, strikes, title, 
         fig.update_xaxes(type='date', range=[_x_min_val, _x_max_extended],
                          showgrid=True, gridcolor="rgba(0,0,0,0.05)", row=2, col=1,
                          showspikes=False, fixedrange=True)
-    # 🔧 staticPlot=True — график не реагирует на тапы/зум
     st.plotly_chart(fig, use_container_width=True, key=key,
                     config=_PLOTLY_STATIC_CONFIG)
 
@@ -1632,14 +1607,12 @@ def _render_alert_card(r: dict) -> str:
       <div style="display:flex; gap:5px; margin-top:7px;">
         <div style="flex:1; text-align:center; padding:5px;
                     border-radius:6px; font-size:.78rem; font-weight:700;
-                    background:{_buy_bg}; color:{_buy_fg};
-                    letter-spacing:.05em;">
+                    background:{_buy_bg}; color:{_buy_fg}; letter-spacing:.05em;">
           {_buy_mark} ПОКУПКА
         </div>
         <div style="flex:1; text-align:center; padding:5px;
                     border-radius:6px; font-size:.78rem; font-weight:700;
-                    background:{_sell_bg}; color:{_sell_fg};
-                    letter-spacing:.05em;">
+                    background:{_sell_bg}; color:{_sell_fg}; letter-spacing:.05em;">
           {_sell_mark} ПРОДАЖА
         </div>
       </div>
@@ -1695,10 +1668,8 @@ def build_alert_targets(asset, asset_type_ui, series_code, board_data, levels):
                          | {float(p['strike']) for p in puts if p.get('strike') is not None})
     if not all_strikes:
         return None
-
     lvl_buy = levels.get("buy") if levels else None
     lvl_sell = levels.get("sell") if levels else None
-
     K_buy_call  = _nearest_strike_above(all_strikes, lvl_buy)
     K_buy_put   = _nearest_strike_below(all_strikes, lvl_buy)
     K_sell_call = _nearest_strike_above(all_strikes, lvl_sell)
@@ -1762,12 +1733,14 @@ def push_alert_levels(ticker: str, buy_lvl, sell_lvl):
                       "ticker": ticker or "",
                       "buy": float(buy_lvl) if buy_lvl is not None else None,
                       "sell": float(sell_lvl) if sell_lvl is not None else None})
-    # ==================================================================
+
+
+# ==================================================================
 # ==================== UI ==========================================
 # ==================================================================
 st.markdown(
-    "<h2 style='margin:0.1rem 0 0.3rem 0; font-size:1.1rem;'>"
-    "MOEX Options & Black-Scholes</h2>",
+    "<h2 style='margin:0.1rem 0 0.3rem 0; font-size:1.05rem;'>"
+    "MOEX Options</h2>",
     unsafe_allow_html=True,
 )
 
@@ -1785,7 +1758,6 @@ st.session_state["_calc_riskfree"]   = _safe_float_qp("rf_buy", 0.0)
 st.session_state["_calc_volatility"] = _safe_float_qp("vol_buy", 0.0)
 st.session_state["_calc_dividend"]   = _safe_float_qp("div_buy", 0.0)
 
-# --- Вкладки: короткие имена для мобильного ---
 tab_calc, tab_board, tab_position, tab_alerts = st.tabs([
     "Калькулятор",
     "Доска",
@@ -1799,7 +1771,6 @@ tab_calc, tab_board, tab_position, tab_alerts = st.tabs([
 # ==================================================================
 @st.fragment
 def _render_calc_tab():
-    # --- Собственные ключи, не пересекаются с Доской ---
     for _k, _v in (
         ("calc_asset_ticker", "SBER"),
         ("calc_asset_category", "Акция"),
@@ -1813,16 +1784,13 @@ def _render_calc_tab():
 
     _alert_assets = get_alert_assets_list()
 
-    # --- Компактный спойлер «Актив и серия» ---
     with st.expander("📊 Актив и опционная серия", expanded=False):
         if _alert_assets:
             _opts = ["— выберите из оповещений —"] + [
                 f"{it['ticker']} · {it['category']}" for it in _alert_assets
             ]
-            _sel_label = st.selectbox(
-                "Актив из оповещений", _opts, index=0,
-                key="calc_asset_select",
-            )
+            _sel_label = st.selectbox("Актив из оповещений", _opts, index=0,
+                                       key="calc_asset_select")
             if _sel_label and not _sel_label.startswith("—"):
                 _parts = _sel_label.split(" · ", 1)
                 if len(_parts) == 2:
@@ -1840,16 +1808,13 @@ def _render_calc_tab():
         with _pc1:
             _raw_asset = st.text_input(
                 "Тикер", value=st.session_state.calc_asset_ticker,
-                key="calc_asset_input", placeholder="SBER, GAZP, RTS…",
-            ).strip()
+                key="calc_asset_input", placeholder="SBER, GAZP…").strip()
         with _pc2:
             _cat_opts = ["Акция", "Фьючерс", "Валюта", "Товар", "Индекс"]
             _cat_idx = (_cat_opts.index(st.session_state.calc_asset_category)
                         if st.session_state.calc_asset_category in _cat_opts else 0)
-            _asset_type_ui = st.selectbox(
-                "Категория", _cat_opts, index=_cat_idx,
-                key="calc_asset_type_select",
-            )
+            _asset_type_ui = st.selectbox("Категория", _cat_opts, index=_cat_idx,
+                                           key="calc_asset_type_select")
 
         _asset_canon = resolve_canonical_asset_code(_raw_asset, _asset_type_ui)
 
@@ -1877,32 +1842,27 @@ def _render_calc_tab():
             _sorted_series = sorted(st.session_state.calc_series_list,
                                      key=lambda x: x.get("expiry", ""))
             _option_labels = [format_series_label(s["expiry"]) for s in _sorted_series]
-            _chosen = st.selectbox("Дата исполнения", _option_labels,
-                                    index=0, key="calc_series_select")
+            _chosen = st.selectbox("Дата исполнения", _option_labels, index=0,
+                                    key="calc_series_select")
             _chosen_idx = _option_labels.index(_chosen)
             _selected = _sorted_series[_chosen_idx]
             st.session_state.calc_selected_series = _selected["code"]
             st.session_state.calc_selected_expiry = _selected["expiry"]
 
-    # --- Уровни из оповещений (компактно) ---
     _levels = find_alert_levels(_asset_canon, category=_asset_type_ui)
     if _levels["found"]:
         st.markdown(
-            f"<div style='background:#eef6fb;border-radius:8px;padding:6px 10px;"
-            f"font-size:.78rem;color:#1c5a7a;margin-bottom:6px;'>"
-            f"📊 Уровни для <b>{_asset_canon}</b>: "
-            f"покупка = <b>{_levels['buy']:.2f} ₽</b> · "
-            f"продажа = <b>{_levels['sell']:.2f} ₽</b></div>",
-            unsafe_allow_html=True,
-        )
+            f"<div style='background:#eef6fb;border-radius:8px;padding:5px 9px;"
+            f"font-size:.75rem;color:#1c5a7a;margin-bottom:5px;'>"
+            f"📊 <b>{_asset_canon}</b>: покупка = <b>{_levels['buy']:.2f}₽</b> · "
+            f"продажа = <b>{_levels['sell']:.2f}₽</b></div>",
+            unsafe_allow_html=True)
 
-    # --- Доска для alert_targets ---
     _board_calc = None
     if st.session_state.calc_selected_series:
         try:
-            _board_calc = fetch_optionboard(
-                _asset_canon, _asset_type_ui,
-                st.session_state.calc_selected_series)
+            _board_calc = fetch_optionboard(_asset_canon, _asset_type_ui,
+                                             st.session_state.calc_selected_series)
         except Exception:
             _board_calc = None
 
@@ -1916,7 +1876,6 @@ def _render_calc_tab():
         except Exception:
             _alert_targets = None
 
-    # --- INJECT для index.html ---
     _inject = {
         "strikes": [], "central_strike": None,
         "expiry": st.session_state.calc_selected_expiry or "",
@@ -1968,8 +1927,7 @@ def _render_calc_tab():
 
     if _asset_type_ui == "Акция" and st.session_state.calc_selected_expiry:
         try:
-            _rf_inj = get_risk_free_rate_for_expiry(
-                st.session_state.calc_selected_expiry)
+            _rf_inj = get_risk_free_rate_for_expiry(st.session_state.calc_selected_expiry)
             _inject["rf_buy"] = _rf_inj
             _inject["rf_sell"] = _rf_inj
         except Exception:
@@ -1999,7 +1957,6 @@ def _render_calc_tab():
     except Exception:
         pass
 
-    # --- Рендер iframe ---
     _calc_html_path = Path("index.html")
     if not _calc_html_path.exists():
         st.error("Файл `index.html` не найден.")
@@ -2019,16 +1976,13 @@ def _render_calc_tab():
     _cache_key = f"_calc_html_{_inject_hash}"
     if _cache_key not in st.session_state:
         st.session_state[_cache_key] = calc_html.replace(
-            HTML_PLACEHOLDER,
-            _inject_json.replace("</", "<\\/"))
+            HTML_PLACEHOLDER, _inject_json.replace("</", "<\\/"))
     calc_html = st.session_state[_cache_key]
-
-    # iframe — full height, вписан в ширину
     components.html(calc_html, height=1180, scrolling=True)
 
 
 # ==================================================================
-# ============ ВКЛАДКА 2: ДОСКА (центрированная) ==================
+# ============ ВКЛАДКА 2: ДОСКА ===================================
 # ==================================================================
 @st.fragment
 def _render_board_tab():
@@ -2043,21 +1997,17 @@ def _render_board_tab():
         if _k not in st.session_state:
             st.session_state[_k] = _v
 
-    # --- Компактный выбор актива (2 строки) ---
     _bc1, _bc2 = st.columns([3, 2])
     with _bc1:
-        _board_raw_asset = st.text_input(
-            "Тикер", value=st.session_state.board_asset,
-            key="board_asset_input", placeholder="SBER, GAZP…",
-        ).strip()
+        _board_raw_asset = st.text_input("Тикер", value=st.session_state.board_asset,
+                                          key="board_asset_input",
+                                          placeholder="SBER, GAZP…").strip()
     with _bc2:
         _cat_opts = ["Акция", "Фьючерс", "Валюта", "Товар", "Индекс"]
         _cat_idx = (_cat_opts.index(st.session_state.board_category)
                     if st.session_state.board_category in _cat_opts else 0)
-        _board_cat = st.selectbox(
-            "Категория", _cat_opts, index=_cat_idx,
-            key="board_category_select",
-        )
+        _board_cat = st.selectbox("Категория", _cat_opts, index=_cat_idx,
+                                   key="board_category_select")
 
     _btn_reload = st.button("🔄 Обновить серии", use_container_width=True,
                              key="board_reload_btn")
@@ -2079,7 +2029,7 @@ def _render_board_tab():
                    or _btn_reload
 
     if _need_reload and _board_asset:
-        with st.spinner(f"Загрузка серий для {_board_asset}…"):
+        with st.spinner(f"Загрузка серий {_board_asset}…"):
             try:
                 _new_series = fetch_optionseries(_board_asset, _board_cat)
                 st.session_state.board_series_list = _new_series or []
@@ -2090,7 +2040,7 @@ def _render_board_tab():
                     st.session_state.board_series_code = _s_first["code"]
                     st.session_state.board_expiry = _s_first["expiry"]
                 if not _new_series:
-                    st.warning(f"⚠ Нет серий для **{_board_asset}** ({_board_cat}).")
+                    st.warning(f"⚠ Нет серий для **{_board_asset}**.")
             except Exception as e:
                 st.error(f"Ошибка загрузки серий: {e}")
                 st.session_state.board_series_list = []
@@ -2099,7 +2049,7 @@ def _render_board_tab():
         st.info("Нет доступных серий.")
         return
 
-    # --- Сводная таблица всех серий (скроллится влево-вправо, узкие колонки) ---
+    # --- Сводная таблица всех серий ---
     st.markdown("##### Все серии")
     try:
         _df_overview = fetch_series_overview(_board_asset, _board_cat)
@@ -2107,29 +2057,28 @@ def _render_board_tab():
         _df_overview = pd.DataFrame()
 
     if not _df_overview.empty:
-        _df_show = _df_overview.drop(columns=["БА", "_series_code",
-                                                "_expiry_raw", "_days_to"],
+        _df_show = _df_overview.drop(columns=["_series_code", "_expiry_raw"],
                                       errors="ignore")
 
         _sel_event = st.dataframe(
             _df_show,
             use_container_width=True,
             hide_index=True,
-            height=min(100 + 32 * len(_df_show), 320),
+            height=min(90 + 30 * len(_df_show), 280),
             on_select="rerun",
             selection_mode="single-row",
             key="series_overview_table",
             column_config={
                 "Тип": st.column_config.TextColumn("Тип", width="small"),
                 "Экспирация": st.column_config.TextColumn("Эксп.", width="medium"),
-                "Объём, ₽": st.column_config.NumberColumn("Объём", width="small",
-                                                          format="%.0f"),
-                "Об.контр.": st.column_config.NumberColumn("Контр", width="small",
-                                                           format="%.0f"),
-                "Откр.поз.": st.column_config.NumberColumn("OI", width="small",
-                                                            format="%.0f"),
-                "Изменение, ₽": st.column_config.NumberColumn("Δ OI", width="small",
-                                                              format="%+.0f"),
+                "Объём": st.column_config.NumberColumn("Объём", width="small",
+                                                        format="%.0f"),
+                "Контр": st.column_config.NumberColumn("Контр", width="small",
+                                                        format="%.0f"),
+                "OI": st.column_config.NumberColumn("OI", width="small",
+                                                     format="%.0f"),
+                "Δ OI": st.column_config.NumberColumn("Δ OI", width="small",
+                                                       format="%+.0f"),
             })
 
         try:
@@ -2148,23 +2097,19 @@ def _render_board_tab():
                     st.session_state.board_expiry = _new_expiry
                     st.rerun()
 
-    # --- Доска выбранной серии ---
     _active_series_code = st.session_state.board_series_code
     _active_expiry = st.session_state.board_expiry
 
     if not _active_series_code:
-        st.info("Выберите серию из таблицы выше.")
+        st.info("Выберите серию.")
         return
 
-    st.markdown(
-        f"##### Доска: **{_board_asset}** · {format_series_label(_active_expiry)}"
-    )
+    st.markdown(f"##### Доска: **{_board_asset}** · {format_series_label(_active_expiry)}")
 
     _board_levels = find_alert_levels(_board_asset, category=_board_cat)
     _board_buy_level  = float(_board_levels["buy"] or 0)  if _board_levels["found"] else 0.0
     _board_sell_level = float(_board_levels["sell"] or 0) if _board_levels["found"] else 0.0
 
-    # --- Инфо-строка ---
     try:
         _board_for_price = fetch_optionboard(_board_asset, _board_cat, _active_series_code)
         _calls_p = _board_for_price.get('call') or []
@@ -2195,19 +2140,18 @@ def _render_board_tab():
         if _central_p is not None:
             _info_parts.append(f"центр: <b>{int(_central_p)}</b>")
         if _k_min is not None:
-            _info_parts.append(f"диапазон: {int(_k_min)}…{int(_k_max)} ({len(_strikes_p)})")
+            _info_parts.append(f"{int(_k_min)}…{int(_k_max)} ({len(_strikes_p)})")
         if _info_parts:
             st.markdown(
                 "<div style='background:#eef6fb;border-radius:8px;"
-                "padding:6px 10px;margin-bottom:6px;font-size:.72rem;"
-                "color:#4a6f8a;display:flex;gap:12px;flex-wrap:wrap;'>"
+                "padding:5px 9px;margin-bottom:5px;font-size:.7rem;"
+                "color:#4a6f8a;display:flex;gap:10px;flex-wrap:wrap;'>"
                 + " · ".join(_info_parts) + "</div>",
                 unsafe_allow_html=True)
     except Exception:
         pass
 
-    highlight_on = st.toggle("🎨 Подсветка Bid/Offer и греков", value=True,
-                              key="board_highlight")
+    highlight_on = st.toggle("🎨 Подсветка", value=True, key="board_highlight")
 
     try:
         board = fetch_optionboard(_board_asset, _board_cat, _active_series_code)
@@ -2242,20 +2186,31 @@ def _render_board_tab():
             "iv": float(_iv) if _iv is not None else None})
     push_strikes_to_calculator(strikes_iv, central)
 
-    # --- Строки доски: узкий набор колонок для мобильного ---
+    # ============================================================
+    # 🔧 ДОСКА: 6 КОЛОНОК ДЛЯ МОБИЛЬНОГО
+    #    ΔC | Call (B/O) | Страйк | IV% | Put (B/O) | ΔP
+    # ============================================================
+    def _fmt_bo(_bid, _off):
+        """Формат «bid / offer» для мобильной ячейки."""
+        _b = "—" if (_bid is None or _bid <= 0) else (
+            f"{_bid:.0f}" if _bid >= 100 else f"{_bid:.1f}")
+        _o = "—" if (_off is None or _off <= 0) else (
+            f"{_off:.0f}" if _off >= 100 else f"{_off:.1f}")
+        if _b == "—" and _o == "—":
+            return "—"
+        return f"{_b}/{_o}"
+
     rows = []
     for _k in strikes:
         _c = c_map.get(_k, {}); _p = p_map.get(_k, {})
         _iv = _c.get('volatility') or _p.get('volatility')
         rows.append({
-            "C_Δ":     _c.get('delta'),
-            "C_Bid":   _c.get('bid'),
-            "C_Off":   _c.get('offer'),
-            "K":       _k,
-            "IV":      _iv,
-            "P_Bid":   _p.get('bid'),
-            "P_Off":   _p.get('offer'),
-            "P_Δ":     _p.get('delta'),
+            "ΔC":     _c.get('delta'),
+            "Call":   _fmt_bo(_c.get('bid'), _c.get('offer')),
+            "K":      _k,
+            "IV":     _iv,
+            "Put":    _fmt_bo(_p.get('bid'), _p.get('offer')),
+            "ΔP":     _p.get('delta'),
         })
     df = pd.DataFrame(rows)
 
@@ -2269,17 +2224,6 @@ def _render_board_tab():
             return "#f5c100"
         return "#e63946"
 
-    def _bid_offer_color(price, theor, is_bid):
-        if not isinstance(price, (int, float)) or not isinstance(theor, (int, float)):
-            return None
-        if price <= 0 or theor <= 0:
-            return None
-        if is_bid and price > theor:
-            return "#fb92f0"
-        if (not is_bid) and price < theor:
-            return "#9c00ff"
-        return None
-
     def style_row(row):
         _strike = float(row["K"])
         is_central = central is not None and abs(_strike - float(central)) < 0.01
@@ -2287,15 +2231,14 @@ def _render_board_tab():
                          and abs(_strike - float(buy_strike_match)) < 0.01)
         is_sell_strike = (sell_strike_match is not None
                           and abs(_strike - float(sell_strike_match)) < 0.01)
-
         styles = []
         for col in row.index:
             style = ""
-            if col.startswith("C_"):
+            if col == "Call":
                 style = "background-color: #dbf3df"
-            elif col.startswith("P_"):
+            elif col == "Put":
                 style = "background-color: #ffcdce"
-            if col == "K":
+            elif col == "K":
                 if is_sell_strike:
                     style = "background-color:#fb92f0;color:white;font-weight:700"
                 elif is_buy_strike:
@@ -2304,36 +2247,20 @@ def _render_board_tab():
                     style = "background-color:#e3e7ec;font-weight:700"
             elif col == "IV" and is_central:
                 style = "background-color:#e3e7ec;font-weight:700"
-
-            if highlight_on:
-                if col in ("C_Δ", "P_Δ"):
-                    c = _delta_color(row[col])
-                    if c:
-                        style = f"background-color:{c};color:white;font-weight:600"
-                elif col in ("C_Bid", "P_Bid", "C_Off", "P_Off"):
-                    _c_theor = None
-                    _c_k = c_map.get(_strike, {}) if col.startswith("C_") else p_map.get(_strike, {})
-                    if col.startswith("C_"):
-                        _c_theor = _c_k.get('theorprice')
-                    else:
-                        _c_theor = _c_k.get('theorprice')
-                    _is_bid = col.endswith("_Bid")
-                    c = _bid_offer_color(row[col], _c_theor, _is_bid)
-                    if c:
-                        style = f"background-color:{c};color:white;font-weight:700"
+            if highlight_on and col in ("ΔC", "ΔP"):
+                _c = _delta_color(row[col])
+                if _c:
+                    style = f"background-color:{_c};color:white;font-weight:600"
             styles.append(style)
         return styles
 
-    # --- Центральные колонки: K и IV ---
     column_display = {
-        "C_Δ":   st.column_config.NumberColumn("ΔC",   width="small", format="%.2f"),
-        "C_Bid": st.column_config.NumberColumn("Bid C", width="small", format="%.2f"),
-        "C_Off": st.column_config.NumberColumn("Off C", width="small", format="%.2f"),
-        "K":     st.column_config.NumberColumn("Страйк", width="small", format="%.0f"),
-        "IV":    st.column_config.NumberColumn("IV %",  width="small", format="%.1f"),
-        "P_Bid": st.column_config.NumberColumn("Bid P", width="small", format="%.2f"),
-        "P_Off": st.column_config.NumberColumn("Off P", width="small", format="%.2f"),
-        "P_Δ":   st.column_config.NumberColumn("ΔP",   width="small", format="%.2f"),
+        "ΔC":   st.column_config.NumberColumn("ΔC",     width="small", format="%.2f"),
+        "Call": st.column_config.TextColumn("Call B/O", width="small"),
+        "K":    st.column_config.NumberColumn("K",      width="small", format="%.0f"),
+        "IV":   st.column_config.NumberColumn("IV%",    width="small", format="%.1f"),
+        "Put":  st.column_config.TextColumn("Put B/O",  width="small"),
+        "ΔP":   st.column_config.NumberColumn("ΔP",     width="small", format="%.2f"),
     }
 
     st.dataframe(
@@ -2352,9 +2279,9 @@ def _render_board_tab():
     if sell_strike_match is not None:
         _caption_extra += f" · продажа ≈ **{sell_strike_match}**"
     st.caption(f"Центр: **{central if central is not None else '—'}** · "
-               f"страйков: {len(df)}{_caption_extra}")
+               f"{len(df)} страйков{_caption_extra}")
 
-    # --- Улыбка волатильности (static) ---
+    # --- Улыбка IV (static) ---
     st.markdown("##### Улыбка волатильности")
     try:
         points = fetch_volatility_graph(_board_asset, _active_series_code, _board_cat)
@@ -2370,9 +2297,9 @@ def _render_board_tab():
             fill='tozeroy', fillcolor='rgba(44,125,160,0.1)',
             name='IV, %'))
         fig.update_layout(
-            title=dict(text="Улыбка IV", font=dict(size=12)),
+            title=dict(text="Улыбка IV", font=dict(size=11)),
             xaxis_title="Страйк", yaxis_title="IV, %",
-            height=300, margin=dict(l=8, r=8, t=30, b=15),
+            height=280, margin=dict(l=6, r=6, t=28, b=12),
             xaxis=dict(tickformat=".0f", fixedrange=True),
             yaxis=dict(tickformat=".2f", fixedrange=True),
             hovermode=False)
@@ -2387,9 +2314,7 @@ def _render_board_tab():
 # ==================================================================
 @st.fragment
 def _render_position_tab():
-    # ============================================================
-    # 1. ПАРАМЕТРЫ ПОД СПОЙЛЕРОМ
-    # ============================================================
+    # --- Параметры под спойлером ---
     with st.expander("⚙️ Параметры портфеля", expanded=False):
         _p1c1, _p1c2 = st.columns(2)
         with _p1c1:
@@ -2400,7 +2325,6 @@ def _render_position_tab():
             risk_pct = st.number_input("Риск, %", min_value=0.1, max_value=100.0,
                                         value=1.0, step=0.1, format="%.1f",
                                         key="rp_inp")
-
         st.markdown("**Комиссии**")
         _p2c1, _p2c2 = st.columns(2)
         with _p2c1:
@@ -2424,7 +2348,6 @@ def _render_position_tab():
 
     risk_amount = deposit * risk_pct / 100.0
 
-    # --- Внутренние функции ---
     def _calc_comm(premium, instr_type="Опцион"):
         return calc_commission(premium, instrument_type=instr_type,
                                min_comm_options=min_comm_options,
@@ -2466,7 +2389,7 @@ def _render_position_tab():
         st.session_state.positions = []
 
     # ============================================================
-    # 2. ДОБАВИТЬ ПОЗИЦИЮ (в карточке)
+    # ДОБАВИТЬ ПОЗИЦИЮ — всегда 2 ПОЛЯ В СТРОКЕ
     # ============================================================
     with st.container(border=True):
         st.markdown("**➕ Добавить позицию**")
@@ -2509,9 +2432,9 @@ def _render_position_tab():
                 asset_now = _asset_now_all
 
                 with st.form("add_position_form", clear_on_submit=False):
-                    # --- Строка 1 ---
-                    _fr1c1, _fr1c2 = st.columns(2)
-                    with _fr1c1:
+                    # --- Строка 1: Тип | Опцион/Контракт ---
+                    _f1c1, _f1c2 = st.columns(2)
+                    with _f1c1:
                         _instr_options = ["Опцион"]
                         if asset_type_ui_now in ("Фьючерс", "Валюта", "Товар"):
                             _instr_options.append("Фьючерс")
@@ -2521,7 +2444,35 @@ def _render_position_tab():
                             _instr_options.append("Индекс")
                         instrument_type = st.selectbox("Тип", _instr_options,
                                                         key="form_instrument_type")
-                    with _fr1c2:
+                    with _f1c2:
+                        if instrument_type == "Опцион":
+                            opt_type = st.selectbox("Опцион", ["Call", "Put"],
+                                                     key="form_opt_type")
+                        else:
+                            opt_type = "—"
+                            st.text_input("Опцион", value="—", disabled=True,
+                                           key="form_opt_type_disabled")
+
+                    # --- Строка 2: Страйк/Контракт | Дата исполнения ---
+                    _f2c1, _f2c2 = st.columns(2)
+                    with _f2c1:
+                        if instrument_type == "Опцион" and all_strikes:
+                            default_idx = 0
+                            if central is not None:
+                                try:
+                                    default_idx = all_strikes.index(
+                                        min(all_strikes,
+                                            key=lambda s: abs(float(s) - float(central))))
+                                except ValueError:
+                                    default_idx = 0
+                            chosen_strike = st.selectbox("Страйк", all_strikes,
+                                                          index=default_idx,
+                                                          key="form_strike")
+                        else:
+                            chosen_strike = None
+                            st.text_input("Страйк", value="—", disabled=True,
+                                           key="form_strike_disabled")
+                    with _f2c2:
                         if instrument_type == "Опцион":
                             chosen_series_label = st.selectbox(
                                 "Дата исп.", _series_labels,
@@ -2539,7 +2490,7 @@ def _render_position_tab():
                                         for c in _contracts
                                     ]
                                     _chosen = st.selectbox(
-                                        "Фьюч. контракт", _contract_labels,
+                                        "Дата исп.", _contract_labels,
                                         index=0, key="form_futures_contract")
                                     _chosen_contract = _contracts[
                                         _contract_labels.index(_chosen)]
@@ -2557,48 +2508,20 @@ def _render_position_tab():
                                 st.text_input("Дата исп.", value="—", disabled=True,
                                                key="form_no_exp_disp")
 
-                    # --- Строка 2 ---
-                    _fr2c1, _fr2c2 = st.columns(2)
-                    with _fr2c1:
-                        if instrument_type == "Опцион" and all_strikes:
-                            default_idx = 0
-                            if central is not None:
-                                try:
-                                    default_idx = all_strikes.index(
-                                        min(all_strikes,
-                                            key=lambda s: abs(float(s) - float(central))))
-                                except ValueError:
-                                    default_idx = 0
-                            chosen_strike = st.selectbox("Страйк", all_strikes,
-                                                          index=default_idx,
-                                                          key="form_strike")
-                        else:
-                            chosen_strike = None
-                            st.text_input("Страйк", value="—", disabled=True,
-                                           key="form_strike_disabled")
-                    with _fr2c2:
-                        if instrument_type == "Опцион":
-                            opt_type = st.selectbox("Опцион", ["Call", "Put"],
-                                                     key="form_opt_type")
-                        else:
-                            opt_type = "—"
-                            st.text_input("Опцион", value="—", disabled=True,
-                                           key="form_opt_type_disabled")
-
-                    # --- Строка 3 ---
-                    _fr3c1, _fr3c2 = st.columns(2)
-                    with _fr3c1:
+                    # --- Строка 3: Направление | Кол-во ---
+                    _f3c1, _f3c2 = st.columns(2)
+                    with _f3c1:
                         side_ui = st.selectbox("Направление",
                                                 ["Покупка", "Продажа"],
                                                 key="form_side")
                         side = _side_internal(side_ui)
-                    with _fr3c2:
+                    with _f3c2:
                         qty_input = st.number_input("Кол-во", min_value=1, value=1,
                                                      step=1, key="form_qty")
 
-                    # --- Строка 4: цена и тикер ---
-                    _fr4c1, _fr4c2 = st.columns(2)
-                    with _fr4c1:
+                    # --- Строка 4: Цена | Тикер (disabled) ---
+                    _f4c1, _f4c2 = st.columns(2)
+                    with _f4c1:
                         ref_opt = (c_map.get(chosen_strike, {}) if opt_type == "Call"
                                    else p_map.get(chosen_strike, {})) \
                                   if chosen_strike is not None else {}
@@ -2609,8 +2532,8 @@ def _render_position_tab():
                         price_input = st.number_input(
                             "Цена, ₽", min_value=0.0, value=0.0, step=0.01,
                             format="%.4f", key="form_price",
-                            help="0 = авто из доски")
-                    with _fr4c2:
+                            help="0 = авто")
+                    with _f4c2:
                         if instrument_type == "Опцион" and chosen_strike is not None:
                             ticker_val = ref_opt.get('secid', '—')
                         elif instrument_type == "Фьючерс" and _futures_secid_form:
@@ -2621,7 +2544,6 @@ def _render_position_tab():
                         st.text_input("Тикер", value=ticker_val, disabled=True,
                                        key="form_ticker_disp")
 
-                    # --- Авто-цена ---
                     use_auto_price = True
                     if instrument_type == "Опцион" and chosen_strike is not None:
                         if _auto_price > 0:
@@ -2629,16 +2551,13 @@ def _render_position_tab():
                                                        chosen_strike, _auto_price)
                             st.markdown(
                                 f"<div style='background:#eef6fb;border-radius:8px;"
-                                f"padding:6px 10px;font-size:.78rem;color:#1c5a7a;"
-                                f"margin:4px 0;'>"
-                                f"Цена из доски: <b style='font-family:Consolas;"
-                                f"font-size:.9rem;'>{_label}</b></div>",
+                                f"padding:5px 9px;font-size:.75rem;color:#1c5a7a;"
+                                f"margin:4px 0;'>Цена из доски: "
+                                f"<b style='font-family:Consolas;font-size:.85rem;'>"
+                                f"{_label}</b></div>",
                                 unsafe_allow_html=True)
-                            use_auto_price = st.checkbox(
-                                "🎯 Авто-цена", value=True,
-                                key="form_use_auto_price")
-                        else:
-                            st.caption("⚠ Авто-цена недоступна.")
+                            use_auto_price = st.checkbox("🎯 Авто-цена", value=True,
+                                                          key="form_use_auto_price")
 
                     submitted = st.form_submit_button("➕ Добавить",
                                                       type="primary",
@@ -2788,24 +2707,20 @@ def _render_position_tab():
                                         "_asset": asset_now,
                                         "_atype": asset_type_ui_now,
                                     })
-                                    st.success(f"✓ Добавлено: {side_ui} {opt_type} "
-                                               f"{chosen_strike} × {qty_input} "
-                                               f"по {final_pos_price:.4f} ₽{_src_label}")
+                                    st.success(f"✓ {side_ui} {opt_type} {chosen_strike} "
+                                               f"× {qty_input} по {final_pos_price:.4f}"
+                                               f"₽{_src_label}")
                                     st.rerun()
 
     # ============================================================
-    # 3. ТЕКУЩИЕ ПОЗИЦИИ (data_editor с горизонтальным скроллом)
+    # ТЕКУЩИЕ ПОЗИЦИИ — data_editor (центр. CSS)
     # ============================================================
     st.markdown("**📋 Текущие позиции**")
 
     if not st.session_state.positions:
         st.caption("Портфель пуст.")
     else:
-        # --- Готовим данные для data_editor ---
         _pos_rows = []
-        _tot_com = _tot_pnl = _tot_delta = _tot_gamma = 0.0
-        _tot_vega = _tot_theta = _tot_rho = 0.0
-
         for _idx, p in enumerate(st.session_state.positions):
             _id = p.get("_id", f"legacy_{_idx}")
             _q = int(p.get("Кол-во", 0))
@@ -2818,13 +2733,6 @@ def _render_position_tab():
             else:
                 _c = _calc_comm(_pr, _instr)
                 _pl = (_th - _pr - _c) * _q
-            _tot_com += _c * abs(_q)
-            _tot_pnl += _pl
-            _tot_delta += (p.get("Дельта") or 0) * _q
-            _tot_gamma += (p.get("Гамма")  or 0) * _q
-            _tot_vega  += (p.get("Вега")   or 0) * _q
-            _tot_theta += (p.get("Тета")   or 0) * _q
-            _tot_rho   += (p.get("Ро")     or 0) * _q
 
             _exp_disp = p.get("Эксп.", "—")
             try:
@@ -2839,8 +2747,8 @@ def _render_position_tab():
                 "👁": "👁" if p.get("visible", True) else "🚫",
                 "Тип": "Опц" if _instr == "Опцион" else (
                     "Фьюч" if _instr == "Фьючерс" else _instr[:4]),
-                "Опцион": p.get("Опцион", "—"),
-                "Страйк": p.get("Страйк"),
+                "О": p.get("Опцион", "—"),
+                "K": p.get("Страйк"),
                 "Эксп.": _exp_disp,
                 "Тикер": p.get("Тикер", "—"),
                 "Кол-во": _q,
@@ -2862,47 +2770,39 @@ def _render_position_tab():
             key="pos_data_editor",
             use_container_width=True,
             hide_index=True,
-            height=min(140 + 35 * len(_df_pos), 400),
+            height=min(120 + 32 * len(_df_pos), 380),
             num_rows="fixed",
             column_config={
-                "☑":     st.column_config.CheckboxColumn("☑", width="small",
-                                                          help="Отметить для удаления"),
-                "👁":     st.column_config.TextColumn("👁", width="small",
-                                                       help="Вид в профиле"),
-                "Тип":    st.column_config.TextColumn("Тип", width="small"),
-                "Опцион": st.column_config.TextColumn("О", width="small"),
-                "Страйк": st.column_config.NumberColumn("K", width="small",
-                                                         format="%.0f"),
-                "Эксп.":  st.column_config.TextColumn("Эксп.", width="small"),
-                "Тикер":  st.column_config.TextColumn("Тикер", width="small"),
+                "☑": st.column_config.CheckboxColumn("☑", width="small"),
+                "👁": st.column_config.TextColumn("👁", width="small"),
+                "Тип": st.column_config.TextColumn("Тип", width="small"),
+                "О": st.column_config.TextColumn("О", width="small"),
+                "K": st.column_config.NumberColumn("K", width="small", format="%.0f"),
+                "Эксп.": st.column_config.TextColumn("Эксп.", width="small"),
+                "Тикер": st.column_config.TextColumn("Тикер", width="small"),
                 "Кол-во": st.column_config.NumberColumn("Кол-во", width="small",
                                                          step=1, format="%d"),
-                "Цена":   st.column_config.NumberColumn("Цена", width="small",
-                                                         step=0.01, format="%.4f"),
-                "Теор":   st.column_config.NumberColumn("Теор", width="small",
-                                                         format="%.2f"),
-                "P&L":    st.column_config.NumberColumn("P&L", width="small",
-                                                         format="%+.2f"),
-                "Δ":      st.column_config.NumberColumn("Δ", width="small",
-                                                         format="%.2f"),
-                "Γ":      st.column_config.NumberColumn("Γ", width="small",
-                                                         format="%.2f"),
-                "ν":      st.column_config.NumberColumn("ν", width="small",
-                                                         format="%.2f"),
-                "Θ":      st.column_config.NumberColumn("Θ", width="small",
-                                                         format="%.2f"),
-                "ρ":      st.column_config.NumberColumn("ρ", width="small",
-                                                         format="%.2f"),
-                "Ком.":   st.column_config.NumberColumn("Ком.", width="small",
-                                                         format="%.4f"),
+                "Цена": st.column_config.NumberColumn("Цена", width="small",
+                                                       step=0.01, format="%.4f"),
+                "Теор": st.column_config.NumberColumn("Теор", width="small",
+                                                       format="%.2f"),
+                "P&L": st.column_config.NumberColumn("P&L", width="small",
+                                                      format="%+.2f"),
+                "Δ": st.column_config.NumberColumn("Δ", width="small", format="%.2f"),
+                "Γ": st.column_config.NumberColumn("Γ", width="small", format="%.2f"),
+                "ν": st.column_config.NumberColumn("ν", width="small", format="%.2f"),
+                "Θ": st.column_config.NumberColumn("Θ", width="small", format="%.2f"),
+                "ρ": st.column_config.NumberColumn("ρ", width="small", format="%.2f"),
+                "Ком.": st.column_config.NumberColumn("Ком.", width="small",
+                                                       format="%.4f"),
             },
-            disabled=["Тип", "Опцион", "Страйк", "Эксп.", "Тикер", "Теор",
+            disabled=["Тип", "О", "K", "Эксп.", "Тикер", "Теор",
                       "P&L", "Δ", "Γ", "ν", "Θ", "ρ", "Ком.", "👁"],
         )
 
-        # --- Применяем изменения из data_editor ---
         _apply_changes = False
         if _edited is not None and len(_edited) == len(_pos_rows):
+            _to_remove = []
             for _i, _row in _edited.iterrows():
                 _orig = _pos_rows[_i]
                 if _orig["Кол-во"] != _row["Кол-во"] or _orig["Цена"] != _row["Цена"]:
@@ -2912,13 +2812,15 @@ def _render_position_tab():
                         _side_from_qty(int(_row["Кол-во"]))
                     _apply_changes = True
                 if bool(_row["☑"]):
-                    st.session_state.positions.pop(_orig["_idx"])
+                    _to_remove.append(_orig["_idx"])
                     _apply_changes = True
+            if _to_remove:
+                for _rm in sorted(_to_remove, reverse=True):
+                    st.session_state.positions.pop(_rm)
 
         if _apply_changes:
             st.rerun()
 
-        # --- Кнопки управления ---
         _btn_r1, _btn_r2 = st.columns(2)
         with _btn_r1:
             if st.button("🔄 Обновить из доски", use_container_width=True,
@@ -2949,7 +2851,7 @@ def _render_position_tab():
                     _p["Тета"]   = _row_p.get("theta")
                     _p["Ро"]     = _row_p.get("rho")
                     _p["_vol"]   = float(_row_p.get("volatility") or 20.0)
-                st.success("✅ Позиции обновлены.")
+                st.success("✅ Обновлено.")
                 st.rerun()
         with _btn_r2:
             if st.button("🗑 Очистить всё", use_container_width=True,
@@ -2957,23 +2859,39 @@ def _render_position_tab():
                 st.session_state.positions = []
                 st.rerun()
 
-        # --- Итоги (компактно) ---
+        # --- Итоги ---
+        _tot_com = _tot_pnl = _tot_delta = _tot_gamma = 0.0
+        _tot_vega = _tot_theta = _tot_rho = 0.0
+        for p in st.session_state.positions:
+            _q = int(p.get("Кол-во", 0))
+            _pr = float(p.get("Цена", 0))
+            _th = float(p.get("Теор.цена", 0))
+            _instr = p.get("Тип инструмента", "Опцион")
+            _isBA = (_instr == "БА" or p.get("Опцион") == "БА")
+            if _isBA:
+                _c = 0.0; _pl = (_th - _pr) * _q
+            else:
+                _c = _calc_comm(_pr, _instr); _pl = (_th - _pr - _c) * _q
+            _tot_com += _c * abs(_q); _tot_pnl += _pl
+            _tot_delta += (p.get("Дельта") or 0) * _q
+            _tot_gamma += (p.get("Гамма")  or 0) * _q
+            _tot_vega  += (p.get("Вега")   or 0) * _q
+            _tot_theta += (p.get("Тета")   or 0) * _q
+            _tot_rho   += (p.get("Ро")     or 0) * _q
+
         st.markdown(
-            f"<div style='background:#f9fbfd;border-radius:8px;padding:8px 10px;"
-            f"font-size:.8rem;display:flex;gap:12px;flex-wrap:wrap;"
+            f"<div style='background:#f9fbfd;border-radius:8px;padding:6px 8px;"
+            f"font-size:.78rem;display:flex;gap:8px;flex-wrap:wrap;"
             f"justify-content:space-around;'>"
-            f"<span>ИТОГО P&L: "
-            f"<b style='color:{'#00a651' if _tot_pnl > 0 else ('#d32f2f' if _tot_pnl < 0 else '#333')};'>"
-            f"{_tot_pnl:+,.2f} ₽</b></span>"
+            f"<span>P&L: <b style='color:{'#00a651' if _tot_pnl > 0 else ('#d32f2f' if _tot_pnl < 0 else '#333')};'>"
+            f"{_tot_pnl:+,.2f}₽</b></span>"
             f"<span>Δ: <b>{_tot_delta:+.2f}</b></span>"
             f"<span>Γ: <b>{_tot_gamma:+.3f}</b></span>"
             f"<span>ν: <b>{_tot_vega:+.2f}</b></span>"
             f"<span>Θ: <b>{_tot_theta:+.2f}</b></span>"
-            f"<span>Ком.: <b>{_tot_com:,.4f}</b></span>"
             f"</div>",
             unsafe_allow_html=True)
 
-        # --- Проверка риска ---
         _max_loss_prem = 0.0
         for p in st.session_state.positions:
             if p.get("Опцион") == "БА":
@@ -2985,14 +2903,15 @@ def _render_position_tab():
             _max_loss_prem += (_pr + _c) * _q
 
         if _max_loss_prem > risk_amount:
-            st.error(f"⚠ Риск: {_max_loss_prem:,.0f}₽ > {risk_amount:,.0f}₽")
+            st.error(f"⚠ Риск {_max_loss_prem:,.0f}₽ > {risk_amount:,.0f}₽")
         else:
-            st.success(f"✓ Риск: {_max_loss_prem:,.0f}₽ / {risk_amount:,.0f}₽")
+            st.success(f"✓ Риск {_max_loss_prem:,.0f}₽ / {risk_amount:,.0f}₽")
 
     # ============================================================
-    # 4. ПРОФИЛЬ ПОЗИЦИИ (static)
+    # ПРОФИЛЬ ПОЗИЦИИ — ИНТЕРАКТИВНЫЙ (spikeline следует за пальцем)
     # ============================================================
     st.markdown("**📈 Профиль позиции**")
+    st.caption("👆 Проведите пальцем по графику — линия покажет P&L")
 
     payoff_positions = [p for p in st.session_state.positions
                         if p.get("visible", True)]
@@ -3010,9 +2929,6 @@ def _render_position_tab():
                     pass
         _anchor_date = max(_all_exp_dates) if _all_exp_dates else None
         _anchor_str = _anchor_date.strftime("%Y-%m-%d") if _anchor_date else None
-
-        if len(set(_all_exp_dates)) > 1:
-            st.caption(f"📅 Anchor: **{_anchor_str}** (разные экспирации)")
 
         F_current = st.session_state.get("_current_market_price", None)
         if F_current is None:
@@ -3037,7 +2953,7 @@ def _render_position_tab():
                 all_pos_strikes = _ba_prices
 
         if not all_pos_strikes:
-            st.caption("Нет данных для профиля.")
+            st.caption("Нет данных.")
         else:
             _range_pts = list(all_pos_strikes)
             if F_current is not None:
@@ -3100,7 +3016,8 @@ def _render_position_tab():
             fig_pf.add_trace(go.Scatter(
                 x=S_arr, y=pnl_arr, mode='lines',
                 line=dict(color='#1e5a7a', width=2.5),
-                name='Экспирация'))
+                name='Экспирация',
+                hovertemplate='БА: %{x:.2f} ₽<br>P&L: %{y:+,.2f} ₽<extra></extra>'))
 
             _cur_pnl_today = None
             try:
@@ -3110,7 +3027,8 @@ def _render_position_tab():
                 fig_pf.add_trace(go.Scatter(
                     x=S_arr, y=pnl_today, mode='lines',
                     line=dict(color='#1e88e5', width=1.8, dash='dash'),
-                    name='Сегодня'))
+                    name='Сегодня',
+                    hovertemplate='БА: %{x:.2f} ₽<br>P&L сегодня: %{y:+,.2f} ₽<extra></extra>'))
                 if F_current is not None:
                     _cur_pnl_today = float(
                         _payoff_today(np.array([F_current]), payoff_positions,
@@ -3121,7 +3039,9 @@ def _render_position_tab():
                         x=[F_current], y=[_cur_pnl_today], mode='markers',
                         marker=dict(size=12, color=_mc, symbol='circle',
                                     line=dict(color='white', width=2)),
-                        name='Тек'))
+                        name='Тек',
+                        hovertemplate='Текущая: %{x:.2f} ₽<br>'
+                                      'P&L: %{y:+,.2f} ₽<extra></extra>'))
             except Exception:
                 pass
 
@@ -3137,18 +3057,41 @@ def _render_position_tab():
                 fig_pf.add_vline(x=be, line_dash='dot', line_color='#00a651',
                                  line_width=1.2, opacity=0.7)
 
+            # 🔧 ИНТЕРАКТИВНЫЙ профиль: spikeline следует за пальцем,
+            #    зум и панорамирование отключены, hovermode='x unified'
             fig_pf.update_layout(
-                title=dict(text="Профиль позиции", font=dict(size=12)),
+                title=dict(text="Профиль позиции", font=dict(size=11)),
                 xaxis_title="Цена БА, ₽", yaxis_title="P&L, ₽",
-                height=340, margin=dict(l=8, r=8, t=30, b=15),
-                xaxis=dict(tickformat=".0f", fixedrange=True),
-                yaxis=dict(tickformat=".2f", fixedrange=True),
+                height=340, margin=dict(l=6, r=6, t=28, b=12),
+                xaxis=dict(
+                    tickformat=".0f",
+                    fixedrange=True,
+                    showspikes=True,
+                    spikemode='across',
+                    spikesnap='cursor',
+                    spikecolor='#1e88e5',
+                    spikethickness=2,
+                    spikedash='solid',
+                ),
+                yaxis=dict(
+                    tickformat=".2f",
+                    fixedrange=True,
+                    showspikes=True,
+                    spikemode='across',
+                    spikesnap='cursor',
+                    spikecolor='#888888',
+                    spikethickness=1,
+                    spikedash='dot',
+                ),
                 legend=dict(orientation="h", yanchor="bottom", y=1.02,
                             xanchor="left", x=0, font=dict(size=9)),
-                hovermode=False)
+                hovermode='x unified',
+                dragmode=False,
+            )
 
+            # 🔧 Используем HOVER-config (не staticPlot)
             st.plotly_chart(fig_pf, use_container_width=True,
-                            config=_PLOTLY_STATIC_CONFIG)
+                            config=_PLOTLY_HOVER_CONFIG)
 
             _m1, _m2, _m3 = st.columns(3)
             with _m1:
@@ -3165,7 +3108,7 @@ def _render_position_tab():
                 st.caption("ТБ: " + " · ".join(f"**{be:,.2f}**" for be in be_points))
 
     # ============================================================
-    # 5. БИРЖЕВЫЕ ГРАФИКИ D1/H1 (static)
+    # БИРЖЕВЫЕ ГРАФИКИ D1/H1 (static)
     # ============================================================
     st.markdown("**📊 Биржевые графики**")
 
@@ -3240,7 +3183,6 @@ def _render_alerts_tab():
         if _k not in st.session_state:
             st.session_state[_k] = _v
 
-    # --- Панель управления: компактная ---
     _ctrl1, _ctrl2 = st.columns([1, 1])
     with _ctrl1:
         if st.button("🔄 Обновить", use_container_width=True,
@@ -3252,10 +3194,9 @@ def _render_alerts_tab():
     with _ctrl2:
         with st.popover("📂 Excel", use_container_width=True):
             st.markdown("**Загрузить Excel**")
-            _xls_file = st.file_uploader(
-                "Excel", type=["xlsx", "xls"],
-                key="alerts_excel_uploader",
-                label_visibility="collapsed")
+            _xls_file = st.file_uploader("Excel", type=["xlsx", "xls"],
+                                          key="alerts_excel_uploader",
+                                          label_visibility="collapsed")
             if _xls_file is not None:
                 try:
                     _xls_raw = pd.read_excel(_xls_file)
@@ -3273,18 +3214,16 @@ def _render_alerts_tab():
                 except Exception as _e:
                     st.error(f"Ошибка: {_e}")
 
-    _view_mode = st.radio(
-        "Вид", ["Карточки", "Таблица"],
-        index=0 if st.session_state.alerts_view_mode == "Карточки" else 1,
-        horizontal=True, label_visibility="collapsed",
-        key="alerts_view_mode_radio")
+    _view_mode = st.radio("Вид", ["Карточки", "Таблица"],
+                           index=0 if st.session_state.alerts_view_mode == "Карточки" else 1,
+                           horizontal=True, label_visibility="collapsed",
+                           key="alerts_view_mode_radio")
     st.session_state.alerts_view_mode = _view_mode
 
     if st.session_state.alerts_loaded_at:
         st.caption(f"Источник: **{st.session_state.alerts_source}** · "
                    f"{st.session_state.alerts_loaded_at}")
 
-    # --- Автозагрузка из Google Sheets ---
     if st.session_state.alerts_source != "Excel":
         _xls_gs, _err_gs = load_google_sheet_cached(
             ALERTS_SHEET_URL, st.session_state.sheet_cache_buster)
@@ -3304,7 +3243,7 @@ def _render_alerts_tab():
         st.warning(f"⚠ {st.session_state.alerts_error}")
 
     if st.session_state.alerts_df is None or st.session_state.alerts_df.empty:
-        st.info("Нет данных. Загрузите Excel или проверьте Google Sheets.")
+        st.info("Нет данных.")
         return
 
     @st.fragment(run_every="30s")
@@ -3371,7 +3310,7 @@ def _render_alerts_tab():
         with _s4:
             st.metric("Продажа", _n_sell)
 
-        st.caption("🔄 Автообновление 30 сек · CLOSE D1")
+        st.caption("🔄 30 сек · CLOSE D1")
 
         if st.session_state.alerts_view_mode == "Карточки":
             for _r in _rows_out:
@@ -3383,9 +3322,9 @@ def _render_alerts_tab():
                     "Тикер": _r["ticker"],
                     "Кат.": _r["category"],
                     "Покупка": _r["lvl_buy"],
-                    "ΔП, %": _r["buy_dev_pct"],
+                    "ΔП%": _r["buy_dev_pct"],
                     "Продажа": _r["lvl_sell"],
-                    "ΔПр, %": _r["sell_dev_pct"],
+                    "ΔПр%": _r["sell_dev_pct"],
                     "Цена": _r["market_price"],
                     "✓П": _r["buy_active"],
                     "✓Пр": _r["sell_active"],
@@ -3400,10 +3339,10 @@ def _render_alerts_tab():
                         if _row[_col] is True:
                             _style = ("background-color:#0a8f3c;"
                                       "color:#ffffff;font-weight:700;")
-                    elif _col == "ΔП, %" and _row[_col] is not None:
+                    elif _col == "ΔП%" and _row[_col] is not None:
                         _style = ("color:#00a651;font-weight:700;"
                                   if _row[_col] <= 0 else "color:#d32f2f;")
-                    elif _col == "ΔПр, %" and _row[_col] is not None:
+                    elif _col == "ΔПр%" and _row[_col] is not None:
                         _style = ("color:#00a651;font-weight:700;"
                                   if _row[_col] >= 0 else "color:#d32f2f;")
                     _styles.append(_style)
@@ -3412,24 +3351,13 @@ def _render_alerts_tab():
             st.dataframe(
                 _df_out.style.apply(_style_alert_row, axis=1).format({
                     "Покупка": "{:,.2f}", "Продажа": "{:,.2f}",
-                    "ΔП, %": "{:+.2f}%", "ΔПр, %": "{:+.2f}%",
+                    "ΔП%": "{:+.2f}%", "ΔПр%": "{:+.2f}%",
                     "Цена": "{:,.2f}",
                     "✓П": lambda v: "✓" if v else "·",
                     "✓Пр": lambda v: "✓" if v else "·",
                 }, na_rep="—"),
                 use_container_width=True, hide_index=True,
-                height=min(120 + 32 * len(_df_out), 500),
-                column_config={
-                    "Тикер": st.column_config.TextColumn("Тикер", width="small"),
-                    "Кат.": st.column_config.TextColumn("Кат.", width="small"),
-                    "Покупка": st.column_config.NumberColumn("Покупка", width="small", format="%.2f"),
-                    "ΔП, %": st.column_config.NumberColumn("ΔП%", width="small", format="%+.1f"),
-                    "Продажа": st.column_config.NumberColumn("Продажа", width="small", format="%.2f"),
-                    "ΔПр, %": st.column_config.NumberColumn("ΔПр%", width="small", format="%+.1f"),
-                    "Цена": st.column_config.NumberColumn("Цена", width="small", format="%.2f"),
-                    "✓П": st.column_config.TextColumn("П", width="small"),
-                    "✓Пр": st.column_config.TextColumn("Пр", width="small"),
-                })
+                height=min(120 + 30 * len(_df_out), 480))
 
     _render_alerts_live()
 
