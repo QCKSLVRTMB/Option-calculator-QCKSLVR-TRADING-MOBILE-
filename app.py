@@ -2187,30 +2187,41 @@ def _render_board_tab():
     push_strikes_to_calculator(strikes_iv, central)
 
     # ============================================================
-    # 🔧 ДОСКА: 6 КОЛОНОК ДЛЯ МОБИЛЬНОГО
-    #    ΔC | Call (B/O) | Страйк | IV% | Put (B/O) | ΔP
+    # 🔧 ВСЕ 22 КОЛОНКИ ДОСКИ
+    #    Call: Тк · ρ · Θ · ν · Γ · Δ · Теор · Посл · Оф · Бид
+    #    Страйк · IV%
+    #    Put:  Бид · Оф · Посл · Теор · Δ · Γ · ν · Θ · ρ · Тк
     # ============================================================
-    def _fmt_bo(_bid, _off):
-        """Формат «bid / offer» для мобильной ячейки."""
-        _b = "—" if (_bid is None or _bid <= 0) else (
-            f"{_bid:.0f}" if _bid >= 100 else f"{_bid:.1f}")
-        _o = "—" if (_off is None or _off <= 0) else (
-            f"{_off:.0f}" if _off >= 100 else f"{_off:.1f}")
-        if _b == "—" and _o == "—":
-            return "—"
-        return f"{_b}/{_o}"
-
     rows = []
     for _k in strikes:
         _c = c_map.get(_k, {}); _p = p_map.get(_k, {})
         _iv = _c.get('volatility') or _p.get('volatility')
         rows.append({
-            "ΔC":     _c.get('delta'),
-            "Call":   _fmt_bo(_c.get('bid'), _c.get('offer')),
+            # --- Call ---
+            "C_Tk":   _c.get('secid', '—'),
+            "C_ρ":    _c.get('rho'),
+            "C_Θ":    _c.get('theta'),
+            "C_ν":    _c.get('vega'),
+            "C_Γ":    _c.get('gamma'),
+            "C_Δ":    _c.get('delta'),
+            "C_Теор": _c.get('theorprice'),
+            "C_Посл": _c.get('last'),
+            "C_Оф":   _c.get('offer'),
+            "C_Бид":  _c.get('bid'),
+            # --- Центр ---
             "K":      _k,
-            "IV":     _iv,
-            "Put":    _fmt_bo(_p.get('bid'), _p.get('offer')),
-            "ΔP":     _p.get('delta'),
+            "IV%":    _iv,
+            # --- Put ---
+            "P_Бид":  _p.get('bid'),
+            "P_Оф":   _p.get('offer'),
+            "P_Посл": _p.get('last'),
+            "P_Теор": _p.get('theorprice'),
+            "P_Δ":    _p.get('delta'),
+            "P_Γ":    _p.get('gamma'),
+            "P_ν":    _p.get('vega'),
+            "P_Θ":    _p.get('theta'),
+            "P_ρ":    _p.get('rho'),
+            "P_Tk":   _p.get('secid', '—'),
         })
     df = pd.DataFrame(rows)
 
@@ -2224,6 +2235,17 @@ def _render_board_tab():
             return "#f5c100"
         return "#e63946"
 
+    def _bid_offer_color(price, theor, is_bid):
+        if not isinstance(price, (int, float)) or not isinstance(theor, (int, float)):
+            return None
+        if price <= 0 or theor <= 0:
+            return None
+        if is_bid and price > theor:
+            return "#fb92f0"
+        if (not is_bid) and price < theor:
+            return "#9c00ff"
+        return None
+
     def style_row(row):
         _strike = float(row["K"])
         is_central = central is not None and abs(_strike - float(central)) < 0.01
@@ -2231,47 +2253,99 @@ def _render_board_tab():
                          and abs(_strike - float(buy_strike_match)) < 0.01)
         is_sell_strike = (sell_strike_match is not None
                           and abs(_strike - float(sell_strike_match)) < 0.01)
+
         styles = []
         for col in row.index:
             style = ""
-            if col == "Call":
+            # Фон Call / Put столбцов
+            if col.startswith("C_"):
                 style = "background-color: #dbf3df"
-            elif col == "Put":
+            elif col.startswith("P_"):
                 style = "background-color: #ffcdce"
-            elif col == "K":
+
+            # Страйк и IV — центр
+            if col == "K":
                 if is_sell_strike:
                     style = "background-color:#fb92f0;color:white;font-weight:700"
                 elif is_buy_strike:
                     style = "background-color:#9c00ff;color:white;font-weight:700"
                 elif is_central:
                     style = "background-color:#e3e7ec;font-weight:700"
-            elif col == "IV" and is_central:
+            elif col == "IV%" and is_central:
                 style = "background-color:#e3e7ec;font-weight:700"
-            if highlight_on and col in ("ΔC", "ΔP"):
-                _c = _delta_color(row[col])
-                if _c:
-                    style = f"background-color:{_c};color:white;font-weight:600"
+
+            # Подсветка греков и Bid/Offer
+            if highlight_on:
+                if col in ("C_Δ", "P_Δ"):
+                    c = _delta_color(row[col])
+                    if c:
+                        style = f"background-color:{c};color:white;font-weight:600"
+                elif col in ("C_Бид", "P_Бид", "C_Оф", "P_Оф"):
+                    _opt = _c if col.startswith("C_") else _p
+                    _theor = _opt.get('theorprice')
+                    _is_bid = col.endswith("_Бид")
+                    c = _bid_offer_color(row[col], _theor, _is_bid)
+                    if c:
+                        style = f"background-color:{c};color:white;font-weight:700"
             styles.append(style)
         return styles
 
+    # ============================================================
+    # 🔧 Минимальные ширины для всех 22 колонок
+    # ============================================================
     column_display = {
-        "ΔC":   st.column_config.NumberColumn("ΔC",     width="small", format="%.2f"),
-        "Call": st.column_config.TextColumn("Call B/O", width="small"),
-        "K":    st.column_config.NumberColumn("K",      width="small", format="%.0f"),
-        "IV":   st.column_config.NumberColumn("IV%",    width="small", format="%.1f"),
-        "Put":  st.column_config.TextColumn("Put B/O",  width="small"),
-        "ΔP":   st.column_config.NumberColumn("ΔP",     width="small", format="%.2f"),
+        # --- Call ---
+        "C_Tk":   st.column_config.TextColumn("Тк",     width=60),
+        "C_ρ":    st.column_config.NumberColumn("ρ",    width=55, format="%.2f"),
+        "C_Θ":    st.column_config.NumberColumn("Θ",    width=55, format="%.2f"),
+        "C_ν":    st.column_config.NumberColumn("ν",    width=55, format="%.2f"),
+        "C_Γ":    st.column_config.NumberColumn("Γ",    width=55, format="%.2f"),
+        "C_Δ":    st.column_config.NumberColumn("Δ",    width=55, format="%.2f"),
+        "C_Теор": st.column_config.NumberColumn("Теор", width=60, format="%.2f"),
+        "C_Посл": st.column_config.NumberColumn("Посл", width=60, format="%.2f"),
+        "C_Оф":   st.column_config.NumberColumn("Оф",   width=55, format="%.2f"),
+        "C_Бид":  st.column_config.NumberColumn("Бид",  width=55, format="%.2f"),
+        # --- Центр ---
+        "K":      st.column_config.NumberColumn("K",    width=60, format="%.0f"),
+        "IV%":    st.column_config.NumberColumn("IV%",  width=55, format="%.1f"),
+        # --- Put ---
+        "P_Бид":  st.column_config.NumberColumn("Бид",  width=55, format="%.2f"),
+        "P_Оф":   st.column_config.NumberColumn("Оф",   width=55, format="%.2f"),
+        "P_Посл": st.column_config.NumberColumn("Посл", width=60, format="%.2f"),
+        "P_Теор": st.column_config.NumberColumn("Теор", width=60, format="%.2f"),
+        "P_Δ":    st.column_config.NumberColumn("Δ",    width=55, format="%.2f"),
+        "P_Γ":    st.column_config.NumberColumn("Γ",    width=55, format="%.2f"),
+        "P_ν":    st.column_config.NumberColumn("ν",    width=55, format="%.2f"),
+        "P_Θ":    st.column_config.NumberColumn("Θ",    width=55, format="%.2f"),
+        "P_ρ":    st.column_config.NumberColumn("ρ",    width=55, format="%.2f"),
+        "P_Tk":   st.column_config.TextColumn("Тк",     width=60),
     }
 
-    st.dataframe(
-        df.style.apply(style_row, axis=1).format(
-            {"K": "{:.0f}", "IV": "{:.2f}"},
-            precision=3, na_rep="—"),
-        column_config=column_display,
-        use_container_width=True,
-        height=520,
-        hide_index=True,
-    )
+    # 🔧 Тонкий шрифт в этой конкретной таблице через уникальный контейнер
+    _board_container = st.container()
+    with _board_container:
+        st.markdown(
+            "<style>"
+            "div[data-testid='stDataFrame'] div[role='gridcell'] {"
+            "  font-size: 10px !important;"
+            "  padding: 1px 2px !important;"
+            "}"
+            "div[data-testid='stDataFrame'] div[role='columnheader'] {"
+            "  font-size: 10px !important;"
+            "  padding: 1px 2px !important;"
+            "}"
+            "</style>",
+            unsafe_allow_html=True,
+        )
+        st.dataframe(
+            df.style.apply(style_row, axis=1).format(
+                {"K": "{:.0f}", "IV%": "{:.1f}"},
+                precision=2, na_rep="—"),
+            column_config=column_display,
+            use_container_width=True,
+            height=520,
+            hide_index=True,
+        )
 
     _caption_extra = ""
     if buy_strike_match is not None:
@@ -2279,7 +2353,8 @@ def _render_board_tab():
     if sell_strike_match is not None:
         _caption_extra += f" · продажа ≈ **{sell_strike_match}**"
     st.caption(f"Центр: **{central if central is not None else '—'}** · "
-               f"{len(df)} страйков{_caption_extra}")
+               f"{len(df)} страйков{_caption_extra} · "
+               f"👉 тяните таблицу влево для просмотра всех греков")
 
     # --- Улыбка IV (static) ---
     st.markdown("##### Улыбка волатильности")
