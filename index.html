@@ -12,77 +12,110 @@
   html, body {
     overscroll-behavior: contain;
     touch-action: manipulation;
+    overflow-x: hidden;
   }
   body {
     background: #eef2f5;
     margin: 0;
-    padding: 8px;
-    font-size: 14px;
+    padding: 6px;
+    font-size: 13px;
+    color: #1a3b4f;
   }
   .container { max-width: 1200px; margin: 0 auto; }
 
   h1 {
-    font-size: clamp(1rem, 4vw, 1.35rem);
+    font-size: clamp(1rem, 4.5vw, 1.25rem);
     font-weight: 600;
-    margin: 0 0 .2rem;
-    color: #1a3b4f;
-    line-height: 1.25;
+    margin: 0 0 .15rem;
+    line-height: 1.22;
   }
   .sub {
     color: #4a6f8a;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     border-left: 3px solid #2c7da0;
-    padding-left: 10px;
-    font-size: .78rem;
+    padding-left: 8px;
+    font-size: .72rem;
   }
 
+  /* ============ Рыночная цена БА ============ */
+  .market-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border: 1px solid #e2edf4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .market-panel .label {
+    font-size: .6rem;
+    font-weight: 700;
+    color: #2c506d;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .market-panel .value {
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    font-weight: 800;
+    color: #1e5a7a;
+    line-height: 1.1;
+  }
+  .market-panel .source {
+    font-size: .6rem;
+    color: #7f9bb3;
+    margin-left: auto;
+    text-align: right;
+    max-width: 45%;
+  }
+
+  /* ============ Панель модели ============ */
   .model-panel {
     background: white;
-    border-radius: 14px;
-    padding: 10px 12px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
     border: 1px solid #e2edf4;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
-  .model-panel label { margin: 0; font-size: .7rem; }
+  .model-panel label { margin: 0; font-size: .65rem; }
   .model-panel select { max-width: 100%; }
-  .model-panel .model-hint {
-    font-size: .68rem;
+  .model-hint {
+    font-size: .62rem;
     color: #5f7f9e;
     font-style: italic;
   }
 
+  /* ============ Двухколоночная сетка (1 колонка на мобильном) ============ */
   .two-columns {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: start; /* важно: чтобы свёрнутая панель не растягивалась по высоте */
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: start;
   }
   @media (min-width: 720px) {
-    .two-columns { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .two-columns { grid-template-columns: 1fr 1fr; gap: 12px; }
   }
 
   /* ============ Панель-спойлер ============ */
   .panel {
     background: white;
-    border-radius: 14px;
-    box-shadow: 0 6px 18px -8px rgba(0,0,0,.10);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px -6px rgba(0,0,0,.10);
     overflow: hidden;
-    /* убираем нативный маркер details */
     list-style: none;
   }
   .panel > summary { list-style: none; }
   .panel > summary::-webkit-details-marker { display: none; }
   .panel > summary::marker { display: none; }
 
-  /* Заголовок-триггер */
   .panel-header {
     color: white;
-    padding: 10px 14px;
-    font-size: .82rem;
+    padding: 9px 12px;
+    font-size: .78rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -100,61 +133,57 @@
 
   .panel-header .chevron {
     display: inline-block;
-    font-size: 1.1rem;
+    font-size: 1rem;
     line-height: 1;
     transform: rotate(180deg);
     transition: transform .2s ease;
     opacity: 0.95;
-    margin-left: 10px;
+    margin-left: 8px;
   }
-  /* поворачиваем шеврон у закрытой панели */
-  .panel:not([open]) .panel-header .chevron {
-    transform: rotate(0deg);
-  }
-
-  .panel-body { padding: 10px 12px; }
-
-  /* Фолбэк для WebView без поддержки details */
+  .panel:not([open]) .panel-header .chevron { transform: rotate(0deg); }
   .panel:not([open]) .panel-body { display: none; }
 
+  .panel-body { padding: 8px 10px; }
+
+  /* ============ Формы ============ */
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 6px;
   }
   .form-row.single { grid-template-columns: 1fr; }
-  @media (max-width: 400px) {
+  @media (max-width: 380px) {
     .form-row { grid-template-columns: 1fr; }
   }
   .form-group { min-width: 0; }
 
   label {
-    font-size: .62rem;
+    font-size: .58rem;
     text-transform: uppercase;
     font-weight: 700;
     color: #2c506d;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     display: block;
     letter-spacing: .02em;
   }
 
   input, select, button {
     width: 100%;
-    padding: 8px 10px;
-    border-radius: 10px;
+    padding: 6px 8px;
+    border-radius: 8px;
     border: 1px solid #cfdfe9;
     background: #fff;
     font-size: 16px;
-    min-height: 40px;
+    min-height: 36px;
     -webkit-appearance: none;
     appearance: none;
   }
   select {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'><path d='M1 3l4 4 4-4' stroke='%234a6f8a' stroke-width='1.5' fill='none'/></svg>");
     background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 26px;
+    background-position: right 8px center;
+    padding-right: 22px;
   }
   button {
     background: #1e5a7a;
@@ -162,8 +191,8 @@
     font-weight: 600;
     border: none;
     cursor: pointer;
-    font-size: 15px;
-    min-height: 42px;
+    font-size: 14px;
+    min-height: 36px;
     transition: background .15s;
   }
   button:active { background: #0f425c; }
@@ -183,92 +212,99 @@
   }
   .validation-msg {
     color: #d32f2f;
-    font-size: .7rem;
-    margin: -4px 0 6px 0;
+    font-size: .65rem;
+    margin: -3px 0 5px 0;
     display: none;
   }
   .validation-msg.show { display: block; }
   .expiry-source {
-    font-size: .65rem;
+    font-size: .6rem;
     color: #2c7da0;
-    margin-top: 2px;
+    margin-top: 1px;
+    min-height: 10px;
+  }
+  .board-price-hint {
+    font-size: .68rem;
+    color: #1c5a7a;
+    margin-top: 3px;
+    font-weight: 700;
     min-height: 12px;
+    font-family: Consolas, monospace;
   }
   #strikeBuy, #strikeSell { font-weight: 700; }
 
+  /* ============ Блок результата ============ */
   .result-block {
-    margin-top: 8px;
-    border-radius: 12px;
-    padding: 10px 12px;
+    margin-top: 6px;
+    border-radius: 10px;
+    padding: 8px 10px;
     border: 1px solid #e2edf4;
   }
   .panel-buy .result-block { background: #f9f3ff; }
   .panel-sell .result-block { background: #fff3fe; }
   .price-value {
-    font-size: clamp(1.15rem, 5vw, 1.45rem);
+    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
     font-weight: 700;
-    line-height: 1.15;
+    line-height: 1.12;
   }
   .panel-buy .price-value { color: #5c0099; }
   .panel-sell .price-value { color: #a3139e; }
   .breakeven {
-    margin-top: 5px;
-    font-size: .75rem;
+    margin-top: 4px;
+    font-size: .7rem;
     color: #4a6f8a;
     background: #eef6fb;
-    border-radius: 8px;
-    padding: 4px 9px;
+    border-radius: 6px;
+    padding: 3px 7px;
     display: inline-block;
   }
   .breakeven b { color: #1c5a7a; }
   .greeks {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 6px;
+    gap: 3px;
+    margin-top: 5px;
   }
   .greek {
     background: white;
-    border-radius: 14px;
-    padding: 3px 8px;
+    border-radius: 12px;
+    padding: 2px 6px;
     border: 1px solid #dee9f0;
-    font-size: .7rem;
+    font-size: .68rem;
     white-space: nowrap;
   }
 
+  /* ============ Кнопки действий ============ */
   .buttons-row {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
-  .buttons-row button {
-    max-width: 240px;
-    width: 100%;
-  }
+  .buttons-row button { max-width: 220px; }
 
+  /* ============ Итоговая панель P&L ============ */
   .spread-panel {
     background: #f9fbfd;
-    border-radius: 14px;
-    padding: 12px 14px;
+    border-radius: 12px;
+    padding: 10px 12px;
     border: 1px solid #e2edf4;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   .spread-panel .price-value { color: #1c5a7a; }
   .badge {
     background: #eef3fc;
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: .7rem;
+    border-radius: 16px;
+    padding: 2px 8px;
+    font-size: .65rem;
     display: inline-block;
     margin-top: 4px;
     color: #1c5a7a;
   }
   .card-title {
-    font-size: .95rem;
+    font-size: .88rem;
     font-weight: 600;
-    margin-bottom: 8px;
-    padding-bottom: 5px;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
     border-bottom: 2px solid #e6edf4;
     color: #1a3b4f;
   }
@@ -279,21 +315,30 @@
   <h1>Калькулятор опционов QCKSLVR TRADING</h1>
   <div class="sub">https://vk.ru/qckslvrtrading</div>
 
+  <!-- Рыночная цена БА -->
+  <div id="marketPricePanel" class="market-panel" style="display:none;">
+    <div>
+      <div class="label">Рыночная цена БА (CLOSE D1)</div>
+      <div class="value" id="marketPrice">— ₽</div>
+    </div>
+    <div class="source" id="marketPriceSource"></div>
+  </div>
+
   <div class="model-panel">
     <div>
-      <label>Модель расчёта (общая)</label>
+      <label>Модель расчёта</label>
       <select id="pricingModel">
         <option value="bs">Black‑Scholes (европейский)</option>
         <option value="binom">Биномиальная (американский)</option>
       </select>
     </div>
     <div class="model-hint">
-      BS — для европейских опционов; биномиальная — для американских.
+      BS — для европейских; биномиальная — для американских.
     </div>
   </div>
 
   <div class="two-columns">
-    <!-- ============ ПОКУПКА (спойлер) ============ -->
+    <!-- ============ ПОКУПКА ============ -->
     <details class="panel panel-buy" open>
       <summary class="panel-header">
         <span>Уровень покупок</span>
@@ -301,7 +346,7 @@
       </summary>
       <div class="panel-body">
         <div class="form-row">
-          <div class="form-group"><label>Тип опциона</label>
+          <div class="form-group"><label>Тип</label>
             <select id="optionTypeBuy"><option value="call">Call</option><option value="put">Put</option></select></div>
           <div class="form-group"><label>Страйк</label>
             <select id="strikeBuy"><option value="0">Загрузка…</option></select></div>
@@ -316,27 +361,29 @@
         <div class="form-row single">
           <div class="form-group"><label>Дата исполнения</label>
             <input type="date" id="expiryDateBuy">
-            <div class="expiry-source" id="expirySourceBuy"></div></div>
+            <div class="expiry-source" id="expirySourceBuy"></div>
+            <div class="board-price-hint" id="boardPriceHintBuy"></div>
+          </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Безрисковая ставка %</label>
+          <div class="form-group"><label>Ставка %</label>
             <input type="number" id="riskFreeBuy" value="0" step="0.0001" inputmode="decimal"></div>
           <div class="form-group"><label>Волатильность %</label>
             <input type="number" id="volatilityBuy" value="30" step="0.1" inputmode="decimal"></div>
         </div>
         <div class="form-row single">
-          <div class="form-group"><label>Дивидендная доходность %</label>
+          <div class="form-group"><label>Дивиденды %</label>
             <input type="number" id="dividendBuy" value="0" step="0.0001" inputmode="decimal"></div>
         </div>
         <div class="result-block">
           <div class="price-value" id="priceBuyResult">— ₽</div>
-          <div class="breakeven">Точка безубыточности: <b id="beBuy">— ₽</b></div>
+          <div class="breakeven">ТБ: <b id="beBuy">— ₽</b></div>
           <div class="greeks" id="greeksBuy"></div>
         </div>
       </div>
     </details>
 
-    <!-- ============ ПРОДАЖА (спойлер) ============ -->
+    <!-- ============ ПРОДАЖА ============ -->
     <details class="panel panel-sell" open>
       <summary class="panel-header">
         <span>Уровень продаж</span>
@@ -344,7 +391,7 @@
       </summary>
       <div class="panel-body">
         <div class="form-row">
-          <div class="form-group"><label>Тип опциона</label>
+          <div class="form-group"><label>Тип</label>
             <select id="optionTypeSell"><option value="call">Call</option><option value="put">Put</option></select></div>
           <div class="form-group"><label>Страйк</label>
             <select id="strikeSell"><option value="0">Загрузка…</option></select></div>
@@ -359,21 +406,23 @@
         <div class="form-row single">
           <div class="form-group"><label>Дата исполнения</label>
             <input type="date" id="expiryDateSell">
-            <div class="expiry-source" id="expirySourceSell"></div></div>
+            <div class="expiry-source" id="expirySourceSell"></div>
+            <div class="board-price-hint" id="boardPriceHintSell"></div>
+          </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>Безрисковая ставка %</label>
+          <div class="form-group"><label>Ставка %</label>
             <input type="number" id="riskFreeSell" value="0" step="0.0001" inputmode="decimal"></div>
           <div class="form-group"><label>Волатильность %</label>
             <input type="number" id="volatilitySell" value="30" step="0.1" inputmode="decimal"></div>
         </div>
         <div class="form-row single">
-          <div class="form-group"><label>Дивидендная доходность %</label>
+          <div class="form-group"><label>Дивиденды %</label>
             <input type="number" id="dividendSell" value="0" step="0.0001" inputmode="decimal"></div>
         </div>
         <div class="result-block">
           <div class="price-value" id="priceSellResult">— ₽</div>
-          <div class="breakeven">Точка безубыточности: <b id="beSell">— ₽</b></div>
+          <div class="breakeven">ТБ: <b id="beSell">— ₽</b></div>
           <div class="greeks" id="greeksSell"></div>
         </div>
       </div>
@@ -521,6 +570,52 @@
     renderStrikesFor('strikeSell', document.getElementById('optionTypeSell').value);
   }
 
+  function _fmtBoardPrice(optType, side, strike, price) {
+    if (price == null || !isFinite(price) || price <= 0) return '—';
+    const sign   = side === 'Buy' ? '+' : '-';
+    const letter = optType === 'call' ? 'C' : 'P';
+    const kStr   = Number.isInteger(Number(strike)) ? String(Number(strike)) : String(strike);
+    const pStr   = Number(price).toFixed(4).replace('.', ',');
+    return `${sign}${letter}${kStr} ${pStr}`;
+  }
+
+  function applyAlertStrike(suf) {
+    const at = (__INJECT__ && __INJECT__.alert_targets) || null;
+    if (!at) return;
+    const typeEl = document.getElementById('optionType' + suf);
+    const selEl  = document.getElementById('strike' + suf);
+    if (!typeEl || !selEl) return;
+    const optType = typeEl.value;
+    const mapKey  = (suf === 'Buy') ? 'strikes_buy' : 'strikes_sell';
+    const targets = at[mapKey] || {};
+    const target  = targets[optType];
+    if (target == null) return;
+    const opt = Array.from(selEl.options).find(o => String(o.value) === String(target));
+    if (opt) {
+      selEl.value = String(target);
+      applySelectColor(selEl);
+    }
+  }
+
+  function renderBoardPriceHint(suf) {
+    const at = (__INJECT__ && __INJECT__.alert_targets) || null;
+    const hintEl = document.getElementById('boardPriceHint' + suf);
+    if (!hintEl) return;
+    if (!at) { hintEl.innerText = ''; return; }
+    const typeEl = document.getElementById('optionType' + suf);
+    const selEl  = document.getElementById('strike' + suf);
+    if (!typeEl || !selEl) { hintEl.innerText = ''; return; }
+    const optType = typeEl.value;
+    const strike  = selEl.value;
+    const mapKey  = (suf === 'Buy') ? 'prices_buy' : 'prices_sell';
+    const prices  = (at[mapKey] || {})[optType] || {};
+    const price   = prices[String(strike)];
+    if (price == null) { hintEl.innerText = ''; return; }
+    const side = suf === 'Buy' ? 'Buy' : 'Sell';
+    hintEl.innerText = 'Цена из доски: '
+      + _fmtBoardPrice(optType, side, strike, Number(price));
+  }
+
   function validateDateField(fieldId, msgId) {
     const el = document.getElementById(fieldId);
     const msgEl = document.getElementById(msgId);
@@ -637,7 +732,7 @@
       isFinite(spread) ? spread.toFixed(2) + ' ₽' : '— ₽';
     const intrinsic = Math.max(0, (isFinite(SSell) && !isNaN(KSell)) ? SSell - KSell : 0);
     document.getElementById('recommendMsg').innerHTML = isFinite(priceSell)
-      ? `Внутренняя стоимость: ${intrinsic.toFixed(2)} ₽ · Спред: ${isFinite(spread) ? spread.toFixed(2) : '—'} ₽`
+      ? `Внутр. стоимость: ${intrinsic.toFixed(2)} ₽ · Спред: ${isFinite(spread) ? spread.toFixed(2) : '—'} ₽`
       : '';
   }
 
@@ -657,11 +752,11 @@
       volatilitySell: document.getElementById('volatilitySell').value,
       dividendSell: document.getElementById('dividendSell').value,
     };
-    try { localStorage.setItem('optionCalcSettings_v4', JSON.stringify(data)); } catch(e){}
+    try { localStorage.setItem('optionCalcSettings_v5', JSON.stringify(data)); } catch(e){}
   }
   function loadSettings(){
     let s = {};
-    try { s = JSON.parse(localStorage.getItem('optionCalcSettings_v4') || '{}'); } catch(e){ s = {}; }
+    try { s = JSON.parse(localStorage.getItem('optionCalcSettings_v5') || '{}'); } catch(e){ s = {}; }
     for (const k in s) {
       const el = document.getElementById(k);
       if (el && s[k] !== undefined) el.value = s[k];
@@ -690,21 +785,29 @@
   });
 
   document.getElementById('optionTypeBuy').addEventListener('change', function(){
-    renderStrikesFor('strikeBuy', this.value); updatePrices(); saveSettings();
+    renderStrikesFor('strikeBuy', this.value);
+    applyAlertStrike('Buy');
+    renderBoardPriceHint('Buy');
+    updatePrices(); saveSettings();
   });
   document.getElementById('optionTypeSell').addEventListener('change', function(){
-    renderStrikesFor('strikeSell', this.value); updatePrices(); saveSettings();
+    renderStrikesFor('strikeSell', this.value);
+    applyAlertStrike('Sell');
+    renderBoardPriceHint('Sell');
+    updatePrices(); saveSettings();
   });
   document.getElementById('strikeBuy').addEventListener('change', function(){
     applySelectColor(this);
     const iv = getIVForStrike(this.value);
     if (iv != null) document.getElementById('volatilityBuy').value = iv;
+    renderBoardPriceHint('Buy');
     updatePrices(); saveSettings();
   });
   document.getElementById('strikeSell').addEventListener('change', function(){
     applySelectColor(this);
     const iv = getIVForStrike(this.value);
     if (iv != null) document.getElementById('volatilitySell').value = iv;
+    renderBoardPriceHint('Sell');
     updatePrices(); saveSettings();
   });
 
@@ -721,6 +824,8 @@
       document.getElementById('volatility'+suf).value = '30';
       document.getElementById('dividend'+suf).value = '0';
       document.getElementById('expirySource'+suf).innerText = '';
+      const hintEl = document.getElementById('boardPriceHint'+suf);
+      if (hintEl) hintEl.innerText = '';
     });
     if (__strikeList.length) renderStrikes();
     updatePrices(); saveSettings(); syncToParent();
@@ -782,13 +887,34 @@
     } else {
       document.getElementById('volatilitySell').value = '30';
     }
-    if (inj.alerts) {
+
+    if (inj.alert_targets) {
+      const at = inj.alert_targets;
+      if (at.lvl_buy != null) {
+        document.getElementById('priceBuy').value = Number(at.lvl_buy).toFixed(2);
+      }
+      if (at.lvl_sell != null) {
+        document.getElementById('priceSell').value = Number(at.lvl_sell).toFixed(2);
+      }
+      applyAlertStrike('Buy');
+      applyAlertStrike('Sell');
+      renderBoardPriceHint('Buy');
+      renderBoardPriceHint('Sell');
+    } else if (inj.alerts) {
       if (inj.alerts.buy != null) {
         document.getElementById('priceBuy').value = Number(inj.alerts.buy).toFixed(2);
       }
       if (inj.alerts.sell != null) {
         document.getElementById('priceSell').value = Number(inj.alerts.sell).toFixed(2);
       }
+    }
+
+    if (inj.market_price != null) {
+      const _mp = Number(inj.market_price);
+      document.getElementById('marketPrice').innerText = _mp.toFixed(2) + ' ₽';
+      document.getElementById('marketPriceSource').innerText =
+        'CLOSE D1 (MOEX ISS)';
+      document.getElementById('marketPricePanel').style.display = 'flex';
     }
 
     document.getElementById('currentDateBuy').value = today;
